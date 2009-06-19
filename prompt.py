@@ -8,22 +8,43 @@ a bash prompt.
 '''
 
 import re
+from mercurial import extensions
 
+def with_groups(m, out):
+    g = m.groups()
+    if any(g) and not all(g):
+        print 'ERROR'
+    return ("%s" + out + "%s") % (g[0][:-1] if g[0] else '',
+                                  g[1][1:]  if g[1] else '')
+    
+    
 
 def prompt(ui, repo, fs):
     """Take a format string, parse any variables, and output the result."""
     
-    def _status(m):
-        stat = repo.status()[:4]
-        return '!' if any(stat[:3]) else '?' if stat[-1] else ''
+    def _branch(m):
+        return with_groups(m, repo[-1].branch())
     
+    def _status(m):
+        st = repo.status(unknown=True)[:5]
+        return with_groups(m, '!' if any(st[:4]) else '?' if st[-1] else '')
+    
+    def _bookmark(m):
+        try:
+            return extensions.find('bookmarks').current(repo)
+        except KeyError:
+            return ''
+    
+    tag_start = r'\{([^{}]*?\{)?'
+    tag_end = r'(\}[^{}]*?)?\}'
     patterns = {
-        r'\{branch\}': lambda m: repo[-1].branch(),
-        r'\{status\}': _status,
+        'branch': _branch,
+        'status': _status,
+        'bookmark': _bookmark,
     }
     
-    for pattern, repl in patterns.items():
-        fs = re.sub(pattern, repl, fs)
+    for tag, repl in patterns.items():
+        fs = re.sub(tag_start + tag + tag_end, repl, fs)
     print fs
 
 cmdtable = {
