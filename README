@@ -1,0 +1,6 @@
+.. -*-markdown-*-
+
+hg-prompt
+=========
+
+hg-prompt is an extension for Mercurial which adds a 'prompt' command for putting repository information into a shell prompt efficiently.
