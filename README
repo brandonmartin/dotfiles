@@ -60,10 +60,7 @@ There are only a few keywords at the moment (mostly the ones I want for myself).
 
 * bookmark: the current bookmark
 * branch: the current branch
-* status:
-    * `!` if the repository has any changed, added, removed or deleted files, otherwise
-    * `?` if the repository has any untracked (but not ignored) files, otherwise
-    * nothing
+* status:  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing
 
 Putting it in a Bash Prompt
 ---------------------------
