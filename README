@@ -22,7 +22,7 @@ Edit the `[extensions]` section in your `~/.hgrc` file:
 Using the Command
 -----------------
 
-The `hg prompt` command takes a single string as an argument and outputs it.  A simple (and useless) example:
+The `hg prompt` command takes a single string as an argument and outputs it.  Here's a simple (and useless) example:
 
     :::text
     $ hg prompt "test"
