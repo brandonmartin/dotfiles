@@ -3,14 +3,14 @@
 hg-prompt
 =========
 
-hg-prompt is an extension for Mercurial which adds an 'hg prompt' command for putting repository information into a shell prompt efficiently.
+hg-prompt is a Mercurial extension which adds an 'hg prompt' command for putting repository information into a shell prompt efficiently.
 
 Installing
 ----------
 
 Clone the repository:
 
-    :::console
+    :::text
     $ hg clone hg clone https://sjl@bitbucket.org/sjl/hg-prompt/
 
 Edit the `[extensions]` section in your `~/.hgrc` file:
@@ -24,7 +24,7 @@ Using the Command
 
 The `hg prompt` command takes a single string as an argument and outputs it.  A simple (and useless) example:
 
-    :::console
+    :::text
     $ hg prompt "test"
     test
 
@@ -77,17 +77,9 @@ To put it in your bash prompt, edit your `~/.bashrc` file to include something l
     
     export PS1='\u at \h in \w$(hg_ps1) $ '
 
-Putting the call in a separate function helps keep things readable if you start adding color codes:
+`source ~/.bashrc` after to test it out.  Make sure you're in a Mercurial repository or you won't see anything.
 
-    #!bash
-    D=$'\e[37;40m'
-    MAGENTA=$'\e[35;40m'
-    GREEN=$'\e[32;40m'
-    YELLOW=$'\e[33;40m'
-    
-    hg_ps1() {
-        hg prompt "{${D} on ${MAGENTA}{branch}}{${D} at ${YELLOW}{bookmark}}{${GREEN}{status}}" 2> /dev/null
-    }
-    
-    export PS1='\n${MAGENTA}\u ${D}at ${YELLOW}\h ${D}in ${GREEN}\w$(hg_ps1)\
-    ${D}\n$ '
+Questions, Comments, Suggestions
+--------------------------------
+
+The code was kind of thrown together in one night after I got tired of chaining three or four hg runs together to get what I wanted.  I'm sure it's not perfect, so if you've got a way to improve it please add and issue and let me know.
