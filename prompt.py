@@ -11,7 +11,7 @@ a shell prompt.
 import re
 from mercurial import extensions
 
-def with_groups(m, out):
+def _with_groups(m, out):
     g = m.groups()
     if any(g) and not all(g):
         print 'ERROR'
@@ -54,17 +54,17 @@ def prompt(ui, repo, fs):
     
     def _branch(m):
         branch = repo[-1].branch()
-        return with_groups(m, branch) if branch else ''
+        return _with_groups(m, branch) if branch else ''
     
     def _status(m):
         st = repo.status(unknown=True)[:5]
         flag = '!' if any(st[:4]) else '?' if st[-1] else ''
-        return with_groups(m, flag) if flag else ''
+        return _with_groups(m, flag) if flag else ''
     
     def _bookmark(m):
         try:
             book = extensions.find('bookmarks').current(repo)
-            return with_groups(m, book) if book else ''
+            return _with_groups(m, book) if book else ''
         except KeyError:
             return ''
     
