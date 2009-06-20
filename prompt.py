@@ -15,23 +15,24 @@ def with_groups(m, out):
     if any(g) and not all(g):
         print 'ERROR'
     return ("%s" + out + "%s") % (g[0][:-1] if g[0] else '',
-                                  g[1][1:]  if g[1] else '')
-    
-    
+                                  g[1][1:]  if g[1] else '')    
 
 def prompt(ui, repo, fs):
     """Take a format string, parse any variables, and output the result."""
     
     def _branch(m):
-        return with_groups(m, repo[-1].branch())
+        branch = repo[-1].branch()
+        return with_groups(m, branch) if branch else ''
     
     def _status(m):
         st = repo.status(unknown=True)[:5]
-        return with_groups(m, '!' if any(st[:4]) else '?' if st[-1] else '')
+        flag = '!' if any(st[:4]) else '?' if st[-1] else ''
+        return with_groups(m, flag) if flag else ''
     
     def _bookmark(m):
         try:
-            return extensions.find('bookmarks').current(repo)
+            book = extensions.find('bookmarks').current(repo)
+            return with_groups(m, book) if book else ''
         except KeyError:
             return ''
     
@@ -45,12 +46,8 @@ def prompt(ui, repo, fs):
     
     for tag, repl in patterns.items():
         fs = re.sub(tag_start + tag + tag_end, repl, fs)
-    print fs
+    ui.status(fs)
 
 cmdtable = {
-    # "command-name": (function-call, options-list, help-string)
-    "prompt": (prompt, [],
-    #                 [('s', 'short', None, 'print short form'),
-     #                 ('l', 'long', None, 'print long form')],
-                     "hg prompt 'FORMATSTRING'")
+    "prompt": (prompt, [], 'hg prompt "FORMATSTRING"')
 }
