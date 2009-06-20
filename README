@@ -79,4 +79,4 @@ To put it in your bash prompt, edit your `~/.bashrc` file to include something l
 Questions, Comments, Suggestions
 --------------------------------
 
-The code was kind of thrown together in one night after I got tired of chaining three or four hg runs together to get what I wanted.  I'm sure it's not perfect, so if you've got a way to improve it please add and issue and let me know.
+The code was kind of thrown together in one night after I got tired of chaining three or four hg runs together to get what I wanted.  I'm sure it's not perfect, so if you've got a way to improve it please add an issue and let me know.
