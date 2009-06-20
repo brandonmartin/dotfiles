@@ -3,4 +3,58 @@
 hg-prompt
 =========
 
-hg-prompt is an extension for Mercurial which adds a 'prompt' command for putting repository information into a shell prompt efficiently.
+hg-prompt is an extension for Mercurial which adds an 'hg prompt' command for putting repository information into a shell prompt efficiently.
+
+Installing
+----------
+
+Clone the repository:
+
+    $ hg clone hg clone https://sjl@bitbucket.org/sjl/hg-prompt/
+
+Edit the `[extensions]` section in your `~/.hgrc` file:
+
+    [extensions]
+    prompt = (path to)/hg-prompt/prompt.py
+
+Using the Command
+-----------------
+
+The `hg prompt` command takes a single string as an argument and outputs it.  A simple (and useless) example:
+
+    $ hg prompt "test"
+    test
+
+Keywords in curly braces can be used to output repository information:
+
+    $ hg prompt "currently on {branch}"
+    currently on default
+
+Keywords also have an extended form:
+
+    {optional text{branch}more optional text}
+
+This form will output the text and the expanded keyword **only** if the keyword successfully expands.  This can be useful for displaying extra text only if it's applicable:
+
+    $ hg prompt "currently on {branch} and at {bookmark}"
+    currently on branch default and at 
+    
+    $ hg prompt "currently on {branch} {and at {bookmark}}"
+    currently on branch default 
+    
+    $ hg bookmark my-book
+    
+    $ hg prompt "currently on {branch} {and at {bookmark}}"
+    currently on branch default and at my-book
+
+Available Keywords
+------------------
+
+There are only a few keywords at the moment (mostly the ones I want for myself).  If you have any suggestions for more please let me know.
+
+* bookmark: the current bookmark
+* branch: the current branch
+* status:
+  * `!` if the repository has any changed, added, removed or deleted files, otherwise
+  * `?` if the repository has any untracked (but not ignored) files, otherwise
+  * nothing
