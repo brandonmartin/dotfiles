@@ -53,7 +53,7 @@ def prompt(ui, repo, fs):
     '''
     
     def _branch(m):
-        branch = repo[-1].branch()
+        branch = repo.dirstate.branch()
         return _with_groups(m, branch) if branch else ''
     
     def _status(m):
