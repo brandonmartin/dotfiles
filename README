@@ -10,12 +10,10 @@ Installing
 
 Clone the repository:
 
-    :::text
-    $ hg clone hg clone https://sjl@bitbucket.org/sjl/hg-prompt/
+    $ hg clone https://sjl@bitbucket.org/sjl/hg-prompt/
 
 Edit the `[extensions]` section in your `~/.hgrc` file:
 
-    :::text
     [extensions]
     prompt = (path to)/hg-prompt/prompt.py
 
@@ -24,24 +22,20 @@ Using the Command
 
 The `hg prompt` command takes a single string as an argument and outputs it.  Here's a simple (and useless) example:
 
-    :::text
     $ hg prompt "test"
     test
 
 Keywords in curly braces can be used to output repository information:
 
-    :::text
     $ hg prompt "currently on {branch}"
     currently on default
 
 Keywords also have an extended form:
 
-    :::text
     {optional text{branch}more optional text}
 
 This form will output the text and the expanded keyword **only** if the keyword successfully expands.  This can be useful for displaying extra text only if it's applicable:
 
-    :::text
     $ hg prompt "currently on {branch} and at {bookmark}"
     currently on branch default and at 
     
@@ -67,7 +61,6 @@ Putting it in a Bash Prompt
 
 To put it in your bash prompt, edit your `~/.bashrc` file to include something like this:
 
-    #!bash
     hg_ps1() {
         hg prompt "{ on {branch}}{ at {bookmark}}{status}" 2> /dev/null
     }
