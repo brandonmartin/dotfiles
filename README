@@ -10,7 +10,7 @@ Installing
 
 Clone the repository:
 
-    $ hg clone https://sjl@bitbucket.org/sjl/hg-prompt/
+    $ hg clone http://bitbucket.org/sjl/hg-prompt/
 
 Edit the `[extensions]` section in your `~/.hgrc` file:
 
