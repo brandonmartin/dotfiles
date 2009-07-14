@@ -9,6 +9,7 @@ a shell prompt.
 '''
 
 import re
+from os import path
 from mercurial import extensions
 
 def _with_groups(m, out):
@@ -68,12 +69,20 @@ def prompt(ui, repo, fs):
         except KeyError:
             return ''
     
+    def _root(m):
+        return _with_groups(m, repo.root) if repo.root else ''
+    
+    def _basename(m):
+        return _with_groups(m, path.basename(repo.root)) if repo.root else ''
+    
     tag_start = r'\{([^{}]*?\{)?'
     tag_end = r'(\}[^{}]*?)?\}'
     patterns = {
         'branch': _branch,
         'status': _status,
         'bookmark': _bookmark,
+        'root': _root,
+        'root\|basename': _basename,
     }
     
     for tag, repl in patterns.items():
