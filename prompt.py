@@ -32,9 +32,9 @@ def prompt(ui, repo, fs):
         {optional text here{keyword}more optional text}
     
     This will expand the inner {keyword} and output it along with the extra
-    text only if the {keyword} expands successfully.  This is useful if a
-    keyword that may not always apply to the current state and you have some
-    text that you would like to see only if it is appropriate:
+    text only if the {keyword} expands successfully.  This is useful if you
+    have a keyword that may not always apply to the current state and you 
+    have some text that you would like to see only if it is appropriate:
     
         $ hg prompt "currently at {bookmark}"
         currently at 
