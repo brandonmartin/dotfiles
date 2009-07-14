@@ -54,9 +54,9 @@ There are only a few keywords at the moment (mostly the ones I want for myself).
 
 * **bookmark:** the current bookmark
 * **branch:** the current branch
-* **root:** the full path to the root of the current repository, with a trailing slash.
+* **root:** the full path to the root of the current repository, with a trailing slash
 * **root|basename:** the directory name of the root of the current repository.  For example, if the repository is in `/home/u/myrepo` then this keyword would expand to `myrepo`.
-* **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing
+* **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing.
 
 Putting it in a Bash Prompt
 ---------------------------
