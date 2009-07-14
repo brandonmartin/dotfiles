@@ -48,6 +48,11 @@ def prompt(ui, repo, fs):
     
     - bookmark: the current bookmark
     - branch: the current branch
+    - root: the full path to the root of the current repository, with a 
+        trailing slash.
+    - root|basename: the directory name of the root of the current
+        repository.  For example, if the repository is in '/home/u/myrepo'
+        then this keyword would expand to 'myrepo'.
     - status: "!" if the current repository contains files that have been
         modified, added, removed, or deleted, otherwise "?" if it contains
         untracked (and not ignored) files, otherwise nothing.
