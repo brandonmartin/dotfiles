@@ -77,9 +77,26 @@ To put it in your bash prompt, edit your `~/.bashrc` file to include something l
         hg prompt "{ on {branch}}{ at {bookmark}}{status}" 2> /dev/null
     }
     
-    export PS1='\u at \h in \w$(hg_ps1) $ '
+    export PS1='\u at \h in \w$(hg_ps1)\n$ '
 
-`source ~/.bashrc` after to test it out.  Make sure you're in a Mercurial repository or you won't see anything.
+`source ~/.bashrc` after to test it out.  Make sure you're in a Mercurial repository or you won't see anything.  This little prompt will give you something like this:
+
+    steve at myhost in ~/src/hg-prompt on default at feature-bookmark?
+    $
+
+How about something a little more interesting?
+
+    hg_ps1() {
+        hg prompt "{[+{incoming|count}]-->}{root|basename}{/{branch}}{-->[+{outgoing|count}]}{ at {bookmark}}{status}" 2> /dev/null
+    }
+    
+    export PS1='$(hg_ps1)\n\u at \h in \w\n$ '
+
+And the result (this example assumes one incoming changeset and two outgoing):
+
+    [+1]-->hg-prompt/default-->[+2] at feature-bookmark
+    steve at myhost in ~/src/hg-prompt
+    $
 
 Questions, Comments, Suggestions
 --------------------------------
