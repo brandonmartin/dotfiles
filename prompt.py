@@ -64,6 +64,19 @@ def prompt(ui, repo, fs='', **opts):
     
     - bookmark: the current bookmark
     - branch: the current branch
+    - root: the full path to the root of the current repository, without a 
+        trailing slash
+    - root|basename: the directory name of the root of the current
+        repository.  For example, if the repository is in '/home/u/myrepo'
+        then this keyword would expand to 'myrepo'.
+    - status: "!" if the current repository contains files that have been
+        modified, added, removed, or deleted, otherwise "?" if it contains
+        untracked (and not ignored) files, otherwise nothing.
+    
+    There are also several keywords that deal with the status of remote
+    repositories.  They cache their results in .hg/prompt/cache/ and refresh
+    approximately every fifteen minutes to avoid overloading remote servers.
+    
     - incoming: this keyword prints nothing on its own.  If the default
         path contains incoming changesets the extra text will be expanded.
         For example:
@@ -76,14 +89,6 @@ def prompt(ui, repo, fs='', **opts):
             '{outgoing changes{outgoing}}' will expand to
             'outgoing changes' if there are changes, '' otherwise.
     - outgoing|count: the number of outgoing changesets if greater than 0
-    - root: the full path to the root of the current repository, without a 
-        trailing slash
-    - root|basename: the directory name of the root of the current
-        repository.  For example, if the repository is in '/home/u/myrepo'
-        then this keyword would expand to 'myrepo'.
-    - status: "!" if the current repository contains files that have been
-        modified, added, removed, or deleted, otherwise "?" if it contains
-        untracked (and not ignored) files, otherwise nothing.
     '''
     
     def _branch(m):

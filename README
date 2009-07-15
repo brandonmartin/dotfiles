@@ -54,13 +54,19 @@ There are only a few keywords at the moment (mostly the ones I want for myself).
 
 * **bookmark:** the current bookmark
 * **branch:** the current branch
+* **root:** the full path to the root of the current repository, without a trailing slash
+* **root|basename:** the directory name of the root of the current repository.  For example, if the repository is in `/home/u/myrepo` then this keyword would expand to `myrepo`.
+* **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing.
+
+Remote Status Keywords
+----------------------
+
+There are several keywords available to monitor the status of remote repositories.  Because this can be an expensive operation if the remote repository is across a network, they cache their results in `.hg/prompt/cache/`.  The cache is updated roughly every fifteen minutes.
+
 * **incoming:** this keyword prints nothing on its own.  If the default path contains incoming changesets the extra text will be expanded. For example: `{incoming changes{incoming}}` will expand to `incoming changes` if there are changes, or nothing otherwise.
 * **incoming|count:** the number of incoming changesets if greater than 0
 * **outgoing:** this keyword prints nothing on its own.  If the current repository contains outgoing changesets (to default) the extra text will be expanded. For example: `{outgoing changes{outgoing}}` will expand to `outgoing changes` if there are changes, or nothing otherwise.
 * **outgoing|count:** the number of outgoing changesets if greater than 0
-* **root:** the full path to the root of the current repository, without a trailing slash
-* **root|basename:** the directory name of the root of the current repository.  For example, if the repository is in `/home/u/myrepo` then this keyword would expand to `myrepo`.
-* **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing.
 
 Putting it in a Bash Prompt
 ---------------------------
@@ -78,4 +84,4 @@ To put it in your bash prompt, edit your `~/.bashrc` file to include something l
 Questions, Comments, Suggestions
 --------------------------------
 
-The code was kind of thrown together in one night after I got tired of chaining three or four hg runs together to get what I wanted.  I'm sure it's not perfect, so if you've got a way to improve it please add an issue and let me know.
+The code was kind of thrown together in a few nights after I got tired of chaining three or four hg runs together to get what I wanted.  I'm sure it's not perfect, so if you've got a way to improve it please add an issue and let me know.
