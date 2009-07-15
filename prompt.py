@@ -10,10 +10,9 @@ a shell prompt.
 
 import re
 from os import path
-from mercurial import extensions
+from mercurial import extensions, hg, cmdutil
 
-def _with_groups(m, out):
-    g = m.groups()
+def _with_groups(g, out):
     if any(g) and not all(g):
         print 'ERROR'
     return ("%s" + out + "%s") % (g[0][:-1] if g[0] else '',
@@ -48,6 +47,18 @@ def prompt(ui, repo, fs):
     
     - bookmark: the current bookmark
     - branch: the current branch
+    - incoming: this keyword prints nothing on its own.  If the default
+        path contains incoming changesets the extra text will be expanded.
+        For example: 
+            '{incoming changes{incoming}}' will expand to
+            'incoming changes' if there are changes, '' otherwise.
+    - incoming|count: the number of incoming changesets if greater than 0
+    - outgoing: this keyword prints nothing on its own.  If the current
+        repository contains outgoing changesets (to default) the extra text
+        will be expanded. For example: 
+            '{outgoing changes{outgoing}}' will expand to
+            'outgoing changes' if there are changes, '' otherwise.
+    - outgoing|count: the number of outgoing changesets if greater than 0
     - root: the full path to the root of the current repository, without a 
         trailing slash
     - root|basename: the directory name of the root of the current
@@ -60,25 +71,62 @@ def prompt(ui, repo, fs):
     
     def _branch(m):
         branch = repo.dirstate.branch()
-        return _with_groups(m, branch) if branch else ''
+        return _with_groups(m.groups(), branch) if branch else ''
     
     def _status(m):
         st = repo.status(unknown=True)[:5]
         flag = '!' if any(st[:4]) else '?' if st[-1] else ''
-        return _with_groups(m, flag) if flag else ''
+        return _with_groups(m.groups(), flag) if flag else ''
     
     def _bookmark(m):
         try:
             book = extensions.find('bookmarks').current(repo)
-            return _with_groups(m, book) if book else ''
+            return _with_groups(m.groups(), book) if book else ''
         except KeyError:
             return ''
     
     def _root(m):
-        return _with_groups(m, repo.root) if repo.root else ''
+        return _with_groups(m.groups(), repo.root) if repo.root else ''
     
     def _basename(m):
-        return _with_groups(m, path.basename(repo.root)) if repo.root else ''
+        return _with_groups(m.groups(), path.basename(repo.root)) if repo.root else ''
+    
+    def _incoming(m):
+        source = "default"
+        ui.quiet = True
+        
+        source, revs, checkout = hg.parseurl(ui.expandpath(source))
+        other = hg.repository(cmdutil.remoteui(repo, {}), source)
+        o = other.changelog.nodesbetween(repo.findincoming(other), revs)[0]
+        count = len(o) if o else 0
+        
+        ui.quiet = False
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+        if g[1]:
+            output = _with_groups(out_g, str(count)) if count else ''
+        else:
+            output = _with_groups(out_g, '') if count else ''
+        return output
+    
+    def _outgoing(m):
+        dest = "default"
+        ui.quiet = True
+        
+        dest, revs, checkout = hg.parseurl(
+            ui.expandpath(dest or 'default-push', dest or 'default'))
+        other = hg.repository(cmdutil.remoteui(repo, {}), dest)
+        o = repo.changelog.nodesbetween(repo.findoutgoing(other), revs)[0]
+        count = len(o) if o else 0
+        
+        ui.quiet = False
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+        if g[1]:
+            output = _with_groups(out_g, str(count)) if count else ''
+        else:
+            output = _with_groups(out_g, '') if count else ''
+        return output
     
     tag_start = r'\{([^{}]*?\{)?'
     tag_end = r'(\}[^{}]*?)?\}'
@@ -88,6 +136,8 @@ def prompt(ui, repo, fs):
         'bookmark': _bookmark,
         'root': _root,
         'root\|basename': _basename,
+        'incoming(\|count)?': _incoming,
+        'outgoing(\|count)?': _outgoing,
     }
     
     for tag, repl in patterns.items():

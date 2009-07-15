@@ -54,6 +54,10 @@ There are only a few keywords at the moment (mostly the ones I want for myself).
 
 * **bookmark:** the current bookmark
 * **branch:** the current branch
+* **incoming:** this keyword prints nothing on its own.  If the default path contains incoming changesets the extra text will be expanded. For example: `{incoming changes{incoming}}` will expand to `incoming changes` if there are changes, or nothing otherwise.
+* **incoming|count:** the number of incoming changesets if greater than 0
+* **outgoing:** this keyword prints nothing on its own.  If the current repository contains outgoing changesets (to default) the extra text will be expanded. For example: `{outgoing changes{outgoing}}` will expand to        `outgoing changes` if there are changes, or nothing otherwise.
+* **outgoing|count:** the number of outgoing changesets if greater than 0
 * **root:** the full path to the root of the current repository, without a trailing slash
 * **root|basename:** the directory name of the root of the current repository.  For example, if the repository is in `/home/u/myrepo` then this keyword would expand to `myrepo`.
 * **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing.
