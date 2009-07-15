@@ -97,30 +97,32 @@ def prompt(ui, repo, fs='', **opts):
     def _basename(m):
         return _with_groups(m.groups(), path.basename(repo.root)) if repo.root else ''
     
-    def _incoming(m):
-        g = m.groups()
-        out_g = (g[0],) + (g[-1],)
-        
-        cache_dir = path.join(repo.root, CACHE_PATH)
-        cache = path.join(cache_dir, 'incoming')
-        if not path.isdir(cache_dir):
-            os.makedirs(cache_dir)
-        
-        cache_exists = path.isfile(cache)
-        
-        cache_time = datetime.fromtimestamp(os.stat(cache).st_mtime)
-        if not cache_exists or cache_time < datetime.now() - CACHE_TIMEOUT:
-            subprocess.Popen(['hg', 'prompt', '--cache-incoming'])
-        
-        if cache_exists:
-            with open(cache) as c:
-                count = len(c.readlines())
-                if g[1]:
-                    return _with_groups(out_g, str(count)) if count else ''
-                else:
-                    return _with_groups(out_g, '') if count else ''
-        else:
-            return ''
+    def _remote(kind):
+        def _r(m):
+            g = m.groups()
+            out_g = (g[0],) + (g[-1],)
+            
+            cache_dir = path.join(repo.root, CACHE_PATH)
+            cache = path.join(cache_dir, kind)
+            if not path.isdir(cache_dir):
+                os.makedirs(cache_dir)
+            
+            cache_exists = path.isfile(cache)
+            
+            cache_time = datetime.fromtimestamp(os.stat(cache).st_mtime)
+            if not cache_exists or cache_time < datetime.now() - CACHE_TIMEOUT:
+                subprocess.Popen(['hg', 'prompt', '--cache-%s' % kind])
+            
+            if cache_exists:
+                with open(cache) as c:
+                    count = len(c.readlines())
+                    if g[1]:
+                        return _with_groups(out_g, str(count)) if count else ''
+                    else:
+                        return _with_groups(out_g, '') if count else ''
+            else:
+                return ''
+        return _r
     
     def _outgoing(m):
         g = m.groups()
@@ -145,7 +147,7 @@ def prompt(ui, repo, fs='', **opts):
         'bookmark': _bookmark,
         'root': _root,
         'root\|basename': _basename,
-        'incoming(\|count)?': _incoming,
+        'incoming(\|count)?': _remote('incoming'),
         'outgoing(\|count)?': _outgoing,
     }
     
