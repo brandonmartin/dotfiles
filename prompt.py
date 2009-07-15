@@ -18,6 +18,13 @@ from mercurial import extensions, hg, cmdutil
 CACHE_PATH = ".hg/prompt/cache"
 CACHE_TIMEOUT = timedelta(minutes=10)
 
+def _cache_remote(repo, kind):
+    cache = path.join(repo.root, CACHE_PATH, kind)
+    c_tmp = cache + '.temp'
+    subprocess.call(['hg', kind, '--quiet'], stdout=file(c_tmp, 'w'))
+    os.rename(c_tmp, cache)
+    return
+
 def _with_groups(g, out):
     if any(g) and not all(g):
         print 'ERROR'
@@ -109,7 +116,8 @@ def prompt(ui, repo, fs='', **opts):
             
             cache_exists = path.isfile(cache)
             
-            cache_time = datetime.fromtimestamp(os.stat(cache).st_mtime)
+            cache_time = (datetime.fromtimestamp(os.stat(cache).st_mtime)
+                          if cache_exists else None)
             if not cache_exists or cache_time < datetime.now() - CACHE_TIMEOUT:
                 subprocess.Popen(['hg', 'prompt', '--cache-%s' % kind])
             
@@ -124,21 +132,6 @@ def prompt(ui, repo, fs='', **opts):
                 return ''
         return _r
     
-    def _outgoing(m):
-        g = m.groups()
-        out_g = (g[0],) + (g[-1],)
-        
-        cache = path.join(repo.root, CACHE_PATH, 'outgoing')
-        if path.isfile(cache):
-            with open(cache) as c:
-                count = c.readline().strip()
-                if g[1]:
-                    return _with_groups(out_g, count) if int(count) else ''
-                else:
-                    return _with_groups(out_g, '') if int(count) else ''
-        else:
-            return ''
-    
     tag_start = r'\{([^{}]*?\{)?'
     tag_end = r'(\}[^{}]*?)?\}'
     patterns = {
@@ -148,15 +141,14 @@ def prompt(ui, repo, fs='', **opts):
         'root': _root,
         'root\|basename': _basename,
         'incoming(\|count)?': _remote('incoming'),
-        'outgoing(\|count)?': _outgoing,
+        'outgoing(\|count)?': _remote('outgoing'),
     }
     
     if opts.get("cache_incoming"):
-        cache = path.join(repo.root, CACHE_PATH, 'incoming')
-        c_tmp = cache + '.temp'
-        subprocess.call(['hg', 'incoming', '--quiet'], stdout=file(c_tmp, 'w'))
-        os.rename(c_tmp, cache)
-        return
+        _cache_remote(repo, 'incoming')
+    
+    if opts.get("cache_outgoing"):
+        _cache_remote(repo, 'outgoing')
     
     for tag, repl in patterns.items():
         fs = re.sub(tag_start + tag + tag_end, repl, fs)
