@@ -11,12 +11,12 @@ a shell prompt.
 import re
 import os
 import subprocess
-import datetime
+from datetime import datetime, timedelta
 from os import path
 from mercurial import extensions, hg, cmdutil
 
 CACHE_PATH = ".hg/prompt/cache"
-CACHE_TIMEOUT = datetime.timedelta(minutes=10)
+CACHE_TIMEOUT = timedelta(minutes=10)
 
 def _with_groups(g, out):
     if any(g) and not all(g):
@@ -100,13 +100,19 @@ def prompt(ui, repo, fs='', **opts):
     def _incoming(m):
         g = m.groups()
         out_g = (g[0],) + (g[-1],)
-        cache = path.join(repo.root, CACHE_PATH, 'incoming')        
         
-        c_refreshed = datetime.datetime.fromtimestamp(os.stat(cache).st_mtime)
-        if c_refreshed < datetime.datetime.now() - CACHE_TIMEOUT:
+        cache_dir = path.join(repo.root, CACHE_PATH)
+        cache = path.join(cache_dir, 'incoming')
+        if not path.isdir(cache_dir):
+            os.makedirs(cache_dir)
+        
+        cache_exists = path.isfile(cache)
+        
+        cache_time = datetime.fromtimestamp(os.stat(cache).st_mtime)
+        if not cache_exists or cache_time < datetime.now() - CACHE_TIMEOUT:
             subprocess.Popen(['hg', 'prompt', '--cache-incoming'])
         
-        if path.isfile(cache):
+        if cache_exists:
             with open(cache) as c:
                 count = len(c.readlines())
                 if g[1]:
