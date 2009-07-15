@@ -13,15 +13,19 @@ import os
 import subprocess
 from datetime import datetime, timedelta
 from os import path
-from mercurial import extensions, hg, cmdutil
+from mercurial import extensions
 
 CACHE_PATH = ".hg/prompt/cache"
-CACHE_TIMEOUT = timedelta(minutes=10)
+CACHE_TIMEOUT = timedelta(minutes=15)
 
 def _cache_remote(repo, kind):
     cache = path.join(repo.root, CACHE_PATH, kind)
     c_tmp = cache + '.temp'
-    subprocess.call(['hg', kind, '--quiet'], stdout=file(c_tmp, 'w'))
+    
+    # This is kind of a hack and I feel a little bit dirty for doing it.
+    IGNORE = open('NUL:','w') if subprocess.mswindows else open('/dev/null','w')
+    
+    subprocess.call(['hg', kind, '--quiet'], stdout=file(c_tmp, 'w'), stderr=IGNORE)
     os.rename(c_tmp, cache)
     return
 
