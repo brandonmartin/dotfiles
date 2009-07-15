@@ -9,8 +9,12 @@ a shell prompt.
 '''
 
 import re
+import os
+import subprocess
 from os import path
 from mercurial import extensions, hg, cmdutil
+
+CACHE_PATH = ".hg/prompt/cache"
 
 def _with_groups(g, out):
     if any(g) and not all(g):
@@ -18,7 +22,7 @@ def _with_groups(g, out):
     return ("%s" + out + "%s") % (g[0][:-1] if g[0] else '',
                                   g[1][1:]  if g[1] else '')    
 
-def prompt(ui, repo, fs):
+def prompt(ui, repo, fs='', **opts):
     '''get repository information for use in a shell prompt
     
     Take a string and output it for use in a shell prompt. You can use 
@@ -92,41 +96,38 @@ def prompt(ui, repo, fs):
         return _with_groups(m.groups(), path.basename(repo.root)) if repo.root else ''
     
     def _incoming(m):
-        source = "default"
-        ui.quiet = True
-        
-        source, revs, checkout = hg.parseurl(ui.expandpath(source))
-        other = hg.repository(cmdutil.remoteui(repo, {}), source)
-        o = other.changelog.nodesbetween(repo.findincoming(other), revs)[0]
-        count = len(o) if o else 0
-        
-        ui.quiet = False
         g = m.groups()
         out_g = (g[0],) + (g[-1],)
-        if g[1]:
-            output = _with_groups(out_g, str(count)) if count else ''
+        
+        cache = path.join(repo.root, CACHE_PATH, 'incoming')
+        cache_out = cache + '.out'
+        
+        subprocess.Popen(['hg', 'prompt', '--cache-incoming'])
+        
+        if path.isfile(cache):
+            with open(cache) as c:
+                count = len(c.readlines())
+                if g[1]:
+                    return _with_groups(out_g, str(count)) if count else ''
+                else:
+                    return _with_groups(out_g, '') if count else ''
         else:
-            output = _with_groups(out_g, '') if count else ''
-        return output
+            return ''
     
     def _outgoing(m):
-        dest = "default"
-        ui.quiet = True
-        
-        dest, revs, checkout = hg.parseurl(
-            ui.expandpath(dest or 'default-push', dest or 'default'))
-        other = hg.repository(cmdutil.remoteui(repo, {}), dest)
-        o = repo.changelog.nodesbetween(repo.findoutgoing(other), revs)[0]
-        count = len(o) if o else 0
-        
-        ui.quiet = False
         g = m.groups()
         out_g = (g[0],) + (g[-1],)
-        if g[1]:
-            output = _with_groups(out_g, str(count)) if count else ''
+        
+        cache = path.join(repo.root, CACHE_PATH, 'outgoing')
+        if path.isfile(cache):
+            with open(cache) as c:
+                count = c.readline().strip()
+                if g[1]:
+                    return _with_groups(out_g, count) if int(count) else ''
+                else:
+                    return _with_groups(out_g, '') if int(count) else ''
         else:
-            output = _with_groups(out_g, '') if count else ''
-        return output
+            return ''
     
     tag_start = r'\{([^{}]*?\{)?'
     tag_end = r'(\}[^{}]*?)?\}'
@@ -140,10 +141,22 @@ def prompt(ui, repo, fs):
         'outgoing(\|count)?': _outgoing,
     }
     
+    if opts.get("cache_incoming"):
+        cache = path.join(repo.root, CACHE_PATH, 'incoming')
+        c_tmp = cache + '.temp'
+        subprocess.call(['hg', 'incoming', '--quiet'], stdout=file(c_tmp, 'w'))
+        os.rename(c_tmp, cache)
+        return
+    
     for tag, repl in patterns.items():
         fs = re.sub(tag_start + tag + tag_end, repl, fs)
     ui.status(fs)
 
 cmdtable = {
-    "prompt": (prompt, [], 'hg prompt STRING')
+    "prompt": 
+    (prompt, [
+        ('', 'cache-incoming', None, 'used internally by hg-prompt'),
+        ('', 'cache-outgoing', None, 'used internally by hg-prompt'),
+    ],
+    'hg prompt STRING')
 }
