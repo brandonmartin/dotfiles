@@ -49,13 +49,13 @@ def prompt(ui, repo, fs):
     - branch: the current branch
     - incoming: this keyword prints nothing on its own.  If the default
         path contains incoming changesets the extra text will be expanded.
-        For example: 
+        For example:
             '{incoming changes{incoming}}' will expand to
             'incoming changes' if there are changes, '' otherwise.
     - incoming|count: the number of incoming changesets if greater than 0
     - outgoing: this keyword prints nothing on its own.  If the current
         repository contains outgoing changesets (to default) the extra text
-        will be expanded. For example: 
+        will be expanded. For example:
             '{outgoing changes{outgoing}}' will expand to
             'outgoing changes' if there are changes, '' otherwise.
     - outgoing|count: the number of outgoing changesets if greater than 0
