@@ -119,6 +119,8 @@ def prompt(ui, repo, fs='', **opts):
             cache_time = (datetime.fromtimestamp(os.stat(cache).st_mtime)
                           if cache_exists else None)
             if not cache_exists or cache_time < datetime.now() - CACHE_TIMEOUT:
+                if not cache_exists:
+                    open(cache, 'w').close()
                 subprocess.Popen(['hg', 'prompt', '--cache-%s' % kind])
             
             if cache_exists:
