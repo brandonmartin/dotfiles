@@ -123,6 +123,11 @@ def prompt(ui, repo, fs='', **opts):
     def _basename(m):
         return _with_groups(m.groups(), path.basename(repo.root)) if repo.root else ''
     
+    def _update(m):
+        curr = repo[None].parents()[0]
+        to = repo[repo.branchtags()[curr.branch()]]
+        return _with_groups(m.groups(), '^') if curr != to else ''
+    
     def _remote(kind):
         def _r(m):
             g = m.groups()
@@ -162,6 +167,7 @@ def prompt(ui, repo, fs='', **opts):
         'root\|basename': _basename,
         'status': _status,
         'task': _task,
+        'update': _update,
         
         'incoming(\|count)?': _remote('incoming'),
         'outgoing(\|count)?': _remote('outgoing'),
