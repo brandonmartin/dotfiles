@@ -55,7 +55,7 @@ This form will output the text and the expanded keyword **only** if the keyword 
 Available Keywords
 ------------------
 
-There are only a few keywords at the moment (mostly the ones I want for myself).  If you have any suggestions for more please let me know.
+There a number of keywords available.  If you have any suggestions for more please let me know.
 
 * **bookmark:** the current bookmark (requires the [bookmarks]() extension)
 * **branch:** the current branch
