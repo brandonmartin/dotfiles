@@ -8,7 +8,7 @@ hg-prompt adds an 'hg prompt' command to Mercurial for viewing repository inform
 Requirements
 ------------
 
-hg-prompt requires Python 2.5 and (obviously) Mercurial.
+hg-prompt requires Python 2.5+ and (obviously) Mercurial.
 
 Installing
 ----------
