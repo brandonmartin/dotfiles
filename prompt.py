@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# Uncomment next line if using python 2.5x
 from __future__ import with_statement
 
 '''get repository information for use in a shell prompt
