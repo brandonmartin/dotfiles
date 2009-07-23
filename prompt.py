@@ -156,12 +156,13 @@ def prompt(ui, repo, fs='', **opts):
     tag_start = r'\{([^{}]*?\{)?'
     tag_end = r'(\}[^{}]*?)?\}'
     patterns = {
-        'branch': _branch,
-        'status': _status,
         'bookmark': _bookmark,
-        'task': _task,
+        'branch': _branch,
         'root': _root,
         'root\|basename': _basename,
+        'status': _status,
+        'task': _task,
+        
         'incoming(\|count)?': _remote('incoming'),
         'outgoing(\|count)?': _remote('outgoing'),
     }
