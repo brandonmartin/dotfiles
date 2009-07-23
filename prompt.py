@@ -64,7 +64,7 @@ def prompt(ui, repo, fs='', **opts):
     
     The following keywords are available:
     
-    - bookmark: the current bookmark
+    - bookmark: the current bookmark (requires the bookmarks extension)
     - branch: the current branch
     - root: the full path to the root of the current repository, without a 
         trailing slash
@@ -74,6 +74,7 @@ def prompt(ui, repo, fs='', **opts):
     - status: "!" if the current repository contains files that have been
         modified, added, removed, or deleted, otherwise "?" if it contains
         untracked (and not ignored) files, otherwise nothing.
+    - task: the current task (requires the tasks extension)
     
     There are also several keywords that deal with the status of remote
     repositories.  They cache their results in .hg/prompt/cache/ and refresh

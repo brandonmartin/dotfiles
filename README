@@ -57,11 +57,15 @@ Available Keywords
 
 There are only a few keywords at the moment (mostly the ones I want for myself).  If you have any suggestions for more please let me know.
 
-* **bookmark:** the current bookmark
+* **bookmark:** the current bookmark (requires the [bookmarks]() extension)
 * **branch:** the current branch
 * **root:** the full path to the root of the current repository, without a trailing slash
 * **root|basename:** the directory name of the root of the current repository.  For example, if the repository is in `/home/u/myrepo` then this keyword would expand to `myrepo`.
 * **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing.
+* **task:** the current task (requires the [tasks]() extension)
+
+[bookmarks]: http://mercurial.selenic.com/wiki/BookmarksExtension
+[tasks]: http://bitbucket.org/alu/hgtasks/wiki/Home
 
 Remote Status Keywords
 ----------------------
