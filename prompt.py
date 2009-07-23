@@ -16,6 +16,7 @@ import subprocess
 from datetime import datetime, timedelta
 from os import path
 from mercurial import extensions
+from mercurial.node import hex, short
 
 CACHE_PATH = ".hg/prompt/cache"
 CACHE_TIMEOUT = timedelta(minutes=15)
@@ -147,6 +148,19 @@ def prompt(ui, repo, fs='', **opts):
         rev = parents[p].rev() if p is not None else None
         return _with_groups(out_g, str(rev)) if rev else ''
     
+    def _node(m):
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+        
+        parents = repo[None].parents()
+        p = 0 if '|merge' not in g else 1
+        p = p if len(parents) > p else None
+        
+        format = short if '|short' in g else hex
+        
+        node = format(parents[p].node()) if p is not None else None
+        return _with_groups(out_g, str(node)) if node else ''
+    
     def _remote(kind):
         def _r(m):
             g = m.groups()
@@ -182,6 +196,7 @@ def prompt(ui, repo, fs='', **opts):
     patterns = {
         'bookmark': _bookmark,
         'branch': _branch,
+        'node(?:(\|short)|(\|merge))*': _node,
         'rev(\|merge)?': _rev,
         'root': _root,
         'root\|basename': _basename,
