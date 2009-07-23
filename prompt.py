@@ -131,6 +131,17 @@ def prompt(ui, repo, fs='', **opts):
         to = repo[repo.branchtags()[curr.branch()]]
         return _with_groups(m.groups(), '^') if curr != to else ''
     
+    def _rev(m):
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+        
+        parents = repo[None].parents()
+        p = 0 if '|merge' not in g else 1
+        p = p if len(parents) > p else None
+        
+        rev = parents[p].rev() if p is not None else None
+        return _with_groups(out_g, str(rev)) if rev else ''
+    
     def _remote(kind):
         def _r(m):
             g = m.groups()
@@ -166,6 +177,7 @@ def prompt(ui, repo, fs='', **opts):
     patterns = {
         'bookmark': _bookmark,
         'branch': _branch,
+        'rev(\|merge)?': _rev,
         'root': _root,
         'root\|basename': _basename,
         'status': _status,
