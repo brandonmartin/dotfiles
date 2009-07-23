@@ -75,6 +75,9 @@ def prompt(ui, repo, fs='', **opts):
         modified, added, removed, or deleted, otherwise "?" if it contains
         untracked (and not ignored) files, otherwise nothing.
     - task: the current task (requires the tasks extension)
+    - update: "^" if the current parent is not the tip of the current branch,
+        otherwise nothing.  In effect, this lets you see if running 
+        'hg update' would do something.
     
     There are also several keywords that deal with the status of remote
     repositories.  They cache their results in .hg/prompt/cache/ and refresh
