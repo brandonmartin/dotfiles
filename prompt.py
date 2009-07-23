@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Uncomment next line if using python 2.5x
+from __future__ import with_statement
+
 '''get repository information for use in a shell prompt
 
 Take a string, parse any special variables inside, and output the result.
@@ -107,6 +110,13 @@ def prompt(ui, repo, fs='', **opts):
         except KeyError:
             return ''
     
+    def _task(m):
+        try:
+            task = extensions.find('tasks').current(repo)
+            return _with_groups(m.groups(), task) if task else ''
+        except KeyError:
+            return ''
+    
     def _root(m):
         return _with_groups(m.groups(), repo.root) if repo.root else ''
     
@@ -149,6 +159,7 @@ def prompt(ui, repo, fs='', **opts):
         'branch': _branch,
         'status': _status,
         'bookmark': _bookmark,
+        'task': _task,
         'root': _root,
         'root\|basename': _basename,
         'incoming(\|count)?': _remote('incoming'),
