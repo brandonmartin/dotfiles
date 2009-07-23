@@ -67,9 +67,13 @@ def prompt(ui, repo, fs='', **opts):
     
     - bookmark: the current bookmark (requires the bookmarks extension)
     - branch: the current branch
-    - rev: the repository-local changeset number of the current parent.  This
-        does not take into account merges (which have two parents) -- see the
-        'rev|merge' keyword for that.
+    - node: the (full) changeset hash of the current parent
+    - node|short: a short form of the changeset hash of the current parent
+    - node|merge: the (full) changeset hash of the changeset you're merging
+        with if you're currently merging, otherwise nothing.
+    - node|merge|short: a short form of the changeset hash of the changeset
+        you're merging with if you're currently merging, otherwise nothing
+    - rev: the repository-local changeset number of the current parent
     - rev|merge: the repository-local changeset number of the changeset
         you're merging with if you're currently merging, otherwise nothing
     - root: the full path to the root of the current repository, without a 
