@@ -63,7 +63,7 @@ There are only a few keywords at the moment (mostly the ones I want for myself).
 * **root|basename:** the directory name of the root of the current repository.  For example, if the repository is in `/home/u/myrepo` then this keyword would expand to `myrepo`.
 * **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing.
 * **task:** the current task (requires the [tasks]() extension)
-* **update:** "^" if the current parent is not the tip of the current branch, otherwise nothing.  In effect, this lets you see if running `hg update` would do something.
+* **update:** `^` if the current parent is not the tip of the current branch, otherwise nothing.  In effect, this lets you see if running `hg update` would do something.
 
 [bookmarks]: http://mercurial.selenic.com/wiki/BookmarksExtension
 [tasks]: http://bitbucket.org/alu/hgtasks/wiki/Home
