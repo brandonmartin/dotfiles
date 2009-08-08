@@ -15,7 +15,7 @@ import os
 import subprocess
 from datetime import datetime, timedelta
 from os import path
-from mercurial import extensions
+from mercurial import extensions, commands
 from mercurial.node import hex, short
 
 CACHE_PATH = ".hg/prompt/cache"
@@ -221,6 +221,26 @@ def prompt(ui, repo, fs='', **opts):
     for tag, repl in patterns.items():
         fs = re.sub(tag_start + tag + tag_end, repl, fs)
     ui.status(fs)
+
+def _pull_with_cache(orig, ui, repo, *args, **opts):
+    """Wrap the pull command to delete the incoming cache as well."""
+    res = orig(ui, repo, *args, **opts)
+    cache = path.join(repo.root, CACHE_PATH, 'incoming')
+    if path.isfile(cache):
+        os.remove(cache)
+    return res
+
+def _push_with_cache(orig, ui, repo, *args, **opts):
+    """Wrap the push command to delete the outgoing cache as well."""
+    res = orig(ui, repo, *args, **opts)
+    cache = path.join(repo.root, CACHE_PATH, 'outgoing')
+    if path.isfile(cache):
+        os.remove(cache)
+    return res
+
+def uisetup(ui):
+    extensions.wrapcommand(commands.table, 'pull', _pull_with_cache)
+    extensions.wrapcommand(commands.table, 'push', _push_with_cache)
 
 cmdtable = {
     "prompt": 
