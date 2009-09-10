@@ -84,6 +84,8 @@ def prompt(ui, repo, fs='', **opts):
     - status: "!" if the current repository contains files that have been
         modified, added, removed, or deleted, otherwise "?" if it contains
         untracked (and not ignored) files, otherwise nothing.
+    - tags: the tags of the current parent, separated by a space
+    - tags|SEP: the tags of the current parent, separated by SEP
     - task: the current task (requires the tasks extension)
     - update: "^" if the current parent is not the tip of the current branch,
         otherwise nothing.  In effect, this lets you see if running 
