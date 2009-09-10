@@ -69,7 +69,7 @@ There a number of keywords available.  If you have any suggestions for more plea
 * **root|basename:** the directory name of the root of the current repository.  For example, if the repository is in `/home/u/myrepo` then this keyword would expand to `myrepo`.
 * **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing.
 * **tags:** the tags of the current parent, separated by a space
-* **tags|SEP:** the tags of the current parent, separated by SEP
+* **tags|SEP:** the tags of the current parent, separated by `SEP`
 * **task:** the current task (requires the [tasks][] extension)
 * **update:** `^` if the current parent is not the tip of the current branch, otherwise nothing.  In effect, this lets you see if running `hg update` would do something.
 
