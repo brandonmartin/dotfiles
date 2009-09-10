@@ -123,6 +123,15 @@ def prompt(ui, repo, fs='', **opts):
         except KeyError:
             return ''
     
+    def _tags(m):
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+        
+        sep = g[1][1:] if g[1] else ' '
+        tags = repo[None].tags()
+        
+        return _with_groups(out_g, sep.join(tags)) if tags else ''
+    
     def _task(m):
         try:
             task = extensions.find('tasks').current(repo)
@@ -205,6 +214,7 @@ def prompt(ui, repo, fs='', **opts):
         'root': _root,
         'root\|basename': _basename,
         'status': _status,
+        'tags(\|[^}]*)?': _tags,
         'task': _task,
         'update': _update,
         
