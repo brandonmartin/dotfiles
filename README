@@ -67,10 +67,10 @@ There a number of keywords available.  If you have any suggestions for more plea
 * **rev|merge:** the repository-local changeset number of the changeset you're merging with if you're currently merging, otherwise nothing
 * **root:** the full path to the root of the current repository, without a trailing slash
 * **root|basename:** the directory name of the root of the current repository.  For example, if the repository is in `/home/u/myrepo` then this keyword would expand to `myrepo`.
-* **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing.
-* **status|modified:** `!` if the current repository contains files that have been modified, added, removed, or deleted, otherwise nothing.
-* **status|unknown:** `?` if the current repository contains untracked files, otherwise nothing.
-* **status|modified|unknown:** `!` if the current repository contains files that have been modified, added, removed, or deleted, *and* `?` if it contains untracked (and not ignored) files, otherwise nothing.
+* **status:**  `!` if the repository has any changed/added/removed files, otherwise `?` if it has any untracked (but not ignored) files, otherwise nothing
+* **status|modified:** `!` if the current repository contains files that have been modified, added, removed, or deleted, otherwise nothing
+* **status|unknown:** `?` if the current repository contains untracked files, otherwise nothing
+* **status|modified|unknown:** `!` if the current repository contains files that have been modified, added, removed, or deleted, *and* `?` if it contains untracked (and not ignored) files, otherwise nothing
 * **tags:** the tags of the current parent, separated by a space
 * **tags|SEP:** the tags of the current parent, separated by `SEP`
 * **task:** the current task (requires the [tasks][] extension)
