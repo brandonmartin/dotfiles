@@ -85,12 +85,12 @@ def prompt(ui, repo, fs='', **opts):
         modified, added, removed, or deleted, otherwise "?" if it contains
         untracked (and not ignored) files, otherwise nothing.
     - status|modified: "!" if the current repository contains files that
-        have been modified, added, removed, or deleted, otherwise nothing.
+        have been modified, added, removed, or deleted, otherwise nothing
     - status|unknown: "?" if the current repository contains untracked
-        files, otherwise nothing.
+        files, otherwise nothing
     - status|modified|unknown: "!" if the current repository contains files
         that have been modified, added, removed, or deleted, and "?" if it
-        contains untracked (and not ignored) files, otherwise nothing.
+        contains untracked (and not ignored) files, otherwise nothing
     - tags: the tags of the current parent, separated by a space
     - tags|SEP: the tags of the current parent, separated by SEP
     - task: the current task (requires the tasks extension)
