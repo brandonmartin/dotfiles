@@ -114,9 +114,23 @@ def prompt(ui, repo, fs='', **opts):
         return _with_groups(m.groups(), branch) if branch else ''
     
     def _status(m):
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+        
         st = repo.status(unknown=True)[:5]
-        flag = '!' if any(st[:4]) else '?' if st[-1] else ''
-        return _with_groups(m.groups(), flag) if flag else ''
+        modified = any(st[:4])
+        unknown = len(st[-1]) > 0
+        
+        flag = ''
+        if '|modified' not in g and '|unknown' not in g:
+            flag = '!' if modified else '?' if unknown else ''
+        else:
+            if '|modified' in g:
+                flag += '!' if modified else ''
+            if '|unknown' in g:
+                flag += '?' if unknown else ''
+        
+        return _with_groups(out_g, flag) if flag else ''
     
     def _bookmark(m):
         try:
@@ -215,7 +229,7 @@ def prompt(ui, repo, fs='', **opts):
         'rev(\|merge)?': _rev,
         'root': _root,
         'root\|basename': _basename,
-        'status': _status,
+        'status(?:(\|modified)|(\|unknown))*': _status,
         'tags(\|[^}]*)?': _tags,
         'task': _task,
         'update': _update,
