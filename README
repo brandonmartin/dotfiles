@@ -63,6 +63,10 @@ There a number of keywords available.  If you have any suggestions for more plea
 * **node|short:** a short form of the changeset hash of the current parent
 * **node|merge:** the (full) changeset hash of the changeset you're merging with if you're currently merging, otherwise nothing.
 * **node|merge|short:** a short form of the changeset hash of the changeset you're merging with if you're currently merging, otherwise nothing
+* **patch:** the topmost currently-applied patch (requires the mq extension)
+* **patch|count:** the number of patches in the queue
+* **patch|applied:** the number of currently applied patches
+* **patch|unapplied:** the number of unapplied patches in the queue
 * **rev:** the repository-local changeset number of the current parent
 * **rev|merge:** the repository-local changeset number of the changeset you're merging with if you're currently merging, otherwise nothing
 * **root:** the full path to the root of the current repository, without a trailing slash
