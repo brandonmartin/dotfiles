@@ -73,6 +73,10 @@ def prompt(ui, repo, fs='', **opts):
         with if you're currently merging, otherwise nothing.
     - node|merge|short: a short form of the changeset hash of the changeset
         you're merging with if you're currently merging, otherwise nothing
+    - patch: the topmost currently-applied patch (requires the mq extension)
+    - patch|count: the number of patches in the queue
+    - patch|applied: the number of currently applied patches
+    - patch|unapplied: the number of unapplied patches in the queue
     - rev: the repository-local changeset number of the current parent
     - rev|merge: the repository-local changeset number of the changeset
         you're merging with if you're currently merging, otherwise nothing
@@ -162,6 +166,30 @@ def prompt(ui, repo, fs='', **opts):
         except KeyError:
             return ''
     
+    def _patch(m):
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+
+        try:
+            extensions.find('mq')
+        except KeyError:
+            return ''
+        
+        q = repo.mq
+        out = ''
+        if '|applied' in g:
+            out = str(len(q.applied))
+        elif '|unapplied' in g:
+            out = str(len(q.unapplied(repo)))
+        elif '|count' in g:
+            out = str(len(q.series))
+        else:
+            applied = q.applied
+            if applied:
+                out = applied[-1].name
+        
+        return _with_groups(out_g, out) if out else ''
+    
     def _root(m):
         return _with_groups(m.groups(), repo.root) if repo.root else ''
     
@@ -233,6 +261,7 @@ def prompt(ui, repo, fs='', **opts):
         'bookmark': _bookmark,
         'branch': _branch,
         'node(?:(\|short)|(\|merge))*': _node,
+        'patch(?:(\|applied)|(\|unapplied)|(\|count))?': _patch,
         'rev(\|merge)?': _rev,
         'root': _root,
         'root\|basename': _basename,
