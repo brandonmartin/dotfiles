@@ -211,6 +211,16 @@ def prompt(ui, repo, fs='', **opts):
         
         rev = parents[parent].rev() if parent is not None else -1
         return _with_groups(out_g, str(rev)) if rev >= 0 else ''
+    def _tip(m):
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+        
+        format = short if '|short' in g else hex
+        
+        tip = repo[len(repo) - 1]
+        tip = format(tip.node()) if '|node' in g else tip.rev()
+        
+        return _with_groups(out_g, str(tip)) if tip >= 0 else ''
     
     def _node(m):
         g = m.groups()
@@ -268,6 +278,7 @@ def prompt(ui, repo, fs='', **opts):
         'status(?:(\|modified)|(\|unknown))*': _status,
         'tags(\|[^}]*)?': _tags,
         'task': _task,
+        'tip(?:(\|node)|(\|short))*?': _tip,
         'update': _update,
         
         'incoming(\|count)?': _remote('incoming'),
