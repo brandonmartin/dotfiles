@@ -78,6 +78,9 @@ There a number of keywords available.  If you have any suggestions for more plea
 * **tags:** the tags of the current parent, separated by a space
 * **tags|SEP:** the tags of the current parent, separated by `SEP`
 * **task:** the current task (requires the [tasks][] extension)
+* **tip:** the repository-local changeset number of the current tip
+* **tip|node:** the (full) changeset hash of the current tip
+* **tip|node|short:** a short form of the changeset hash of the current tip
 * **update:** `^` if the current parent is not the tip of the current branch, otherwise nothing.  In effect, this lets you see if running `hg update` would do something.
 
 [bookmarks]: http://mercurial.selenic.com/wiki/BookmarksExtension
