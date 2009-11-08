@@ -42,19 +42,19 @@ def prompt(ui, repo, fs='', **opts):
     '''get repository information for use in a shell prompt
     
     Take a string and output it for use in a shell prompt. You can use 
-    keywords in curly braces:
+    keywords in curly braces::
     
         $ hg prompt "currently on {branch}"
         currently on default
     
-    You can also use an extended form of any keyword:
+    You can also use an extended form of any keyword::
     
         {optional text here{keyword}more optional text}
     
     This will expand the inner {keyword} and output it along with the extra
     text only if the {keyword} expands successfully.  This is useful if you
     have a keyword that may not always apply to the current state and you 
-    have some text that you would like to see only if it is appropriate:
+    have some text that you would like to see only if it is appropriate::
     
         $ hg prompt "currently at {bookmark}"
         currently at 
