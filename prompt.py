@@ -211,6 +211,7 @@ def prompt(ui, repo, fs='', **opts):
         
         rev = parents[parent].rev() if parent is not None else -1
         return _with_groups(out_g, str(rev)) if rev >= 0 else ''
+    
     def _tip(m):
         g = m.groups()
         out_g = (g[0],) + (g[-1],)
@@ -218,9 +219,10 @@ def prompt(ui, repo, fs='', **opts):
         format = short if '|short' in g else hex
         
         tip = repo[len(repo) - 1]
+        rev = tip.rev()
         tip = format(tip.node()) if '|node' in g else tip.rev()
         
-        return _with_groups(out_g, str(tip)) if tip >= 0 else ''
+        return _with_groups(out_g, str(tip)) if rev >= 0 else ''
     
     def _node(m):
         g = m.groups()
