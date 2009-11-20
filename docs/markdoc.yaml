@@ -1,10 +1,16 @@
 wiki-name: "hg-prompt"
+
+
+template-dir: ".templates"
+static-dir: "static"
+
 hide-prefix: "."
 document-extensions: [.md, .mdown, .markdown]
 generate-listing: always
 listing-filename: "list.html"
-use-default-static: true
-use-default-templates: true
+
+use-default-static: false
+use-default-templates: false
 
 markdown:
   safe_mode: false
