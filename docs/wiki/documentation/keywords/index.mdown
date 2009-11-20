@@ -1,0 +1,123 @@
+Keywords
+========
+
+There a number of keywords available.  If you have any suggestions for more please [let me know][issues].
+
+[issues]: http://bitbucket.org/sjl/hg-prompt/issues
+
+Some of the keywords support filters.  These filters can be combined when it makes sense.  If in doubt, try it!
+
+[TOC]
+
+##bookmark##
+:   Display the current bookmark (requires the [bookmarks][] extension).
+
+##branch##
+:   Display the current branch.
+
+##incoming##
+:   Display nothing, but if the default path contains incoming changesets the 
+    extra text will be expanded.
+    
+    For example: `{incoming changes{incoming}}` will expand to
+    `incoming changes` if there are changes, otherwise nothing.
+    
+    Checking for incoming changesets is an expensive operation, so `hg-prompt` 
+    will cache the results in `.hg/prompt/cache/` and refresh them every 15 
+    minutes.
+    
+    |count
+    :   Display the number of incoming changesets (if greater than 0).
+
+##node##
+:   Display the (full) changeset hash of the current parent.
+    
+    |short
+    :   Display the hash as the short, 12-character form.
+    
+    |merge
+    :   Display the hash of the changeset you're merging with.
+
+##outgoing##
+:   Display nothing, but if the current repository contains outgoing 
+    changesets (to default) the extra text will be expanded.
+    
+    For example: `{outgoing changes{outgoing}}` will expand to
+    `outgoing changes` if there are changes, otherwise nothing.
+    
+    Checking for outgoing changesets is an expensive operation, so `hg-prompt` 
+    will cache the results in `.hg/prompt/cache/` and refresh them every 15 
+    minutes.
+    
+    |count
+    :   Display the number of outgoing changesets (if greater than 0).
+
+##patch##
+:   Display the topmost currently-applied patch (requires the [mq][]
+    extension).
+    
+    |count
+    :   Display the number of patches in the queue.
+    
+    |applied
+    :   Display the number of currently applied patches in the queue.
+    
+    |unapplied
+    :   Display the number of currently unapplied patches in the queue.
+
+##rev##
+:   Display the repository-local changeset number of the current parent.
+    
+    |merge
+    :   Display the repository-local changeset number of the changeset you're
+        merging with.
+
+##root##
+:   Display the full path to the root of the current repository, without a 
+    trailing slash.
+    
+    |basename
+    :   Display the directory name of the root of the current repository. For 
+        example, if the repository is in `/home/u/myrepo` then this keyword
+        would expand to `myrepo`.
+
+##status##
+:   Display `!` if the repository has any changed/added/removed files, 
+    otherwise `?` if it has any untracked (but not ignored) files, otherwise 
+    nothing.
+    
+    |modified
+    :   Display `!` if the current repository contains files that have been 
+        modified, added, removed, or deleted, otherwise nothing.
+        
+    |unknown
+    :   Display `?` if the current repository contains untracked files, 
+        otherwise nothing.
+
+##tags##
+:   Display the tags of the current parent, separated by a space.
+    
+    |SEP
+    :   Display the tags of the current parent, separated by `SEP`.
+
+##task##
+:   Display the current task (requires the [tasks][] extension).
+
+##tip##
+:   Display the repository-local changeset number of the current tip.
+    
+    |node
+    :   Display the (full) changeset hash of the current tip.
+    
+    |short
+    :   Display a short form of the changeset hash of the current tip (must be 
+        used with the **|node** filter)
+
+##update##
+:   Display `^` if the current parent is not the tip of the current branch, 
+    otherwise nothing.  In effect, this lets you see if running `hg update` 
+    would do something.
+
+[bookmarks]: http://mercurial.selenic.com/wiki/BookmarksExtension
+[tasks]: http://bitbucket.org/alu/hgtasks/wiki/Home
+[mq]: http://mercurial.selenic.com/wiki/MqExtension
