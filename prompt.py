@@ -231,6 +231,13 @@ def prompt(ui, repo, fs='', **opts):
         sep = join_filter_arg if join_filter else ' -> '
         
         patches = repo.mq.series
+        applied = [p.name for p in repo.mq.applied]
+        unapplied = [p[1] for p in repo.mq.unapplied(repo)]
+        
+        if _get_filter('hide_applied', g):
+            patches = filter(lambda p: p not in applied, patches)
+        if _get_filter('hide_unapplied', g):
+            patches = filter(lambda p: p not in unapplied, patches)
         
         if _get_filter('reverse', g):
             patches = reversed(patches)
@@ -319,16 +326,34 @@ def prompt(ui, repo, fs='', **opts):
     patterns = {
         'bookmark': _bookmark,
         'branch': _branch,
-        'node(?:(\|short)|(\|merge))*': _node,
-        'patch(?:(\|applied)|(\|unapplied)|(\|count))?': _patch,
-        'patches(?:(\|join\(.*?\))|(\|reverse))*': _patches,
+        'node(?:'
+            '(\|short)'
+            '|(\|merge)'
+            ')*': _node,
+        'patch(?:'
+            '(\|applied)'
+            '|(\|unapplied)'
+            '|(\|count)'
+            ')?': _patch,
+        'patches(?:'
+            '(\|join\(.*?\))'
+            '|(\|reverse)'
+            '|(\|hide_applied)'
+            '|(\|hide_unapplied)'
+            ')*': _patches,
         'rev(\|merge)?': _rev,
         'root': _root,
         'root\|basename': _basename,
-        'status(?:(\|modified)|(\|unknown))*': _status,
+        'status(?:'
+            '(\|modified)'
+            '|(\|unknown)'
+            ')*': _status,
         'tags(\|[^}]*)?': _tags,
         'task': _task,
-        'tip(?:(\|node)|(\|short))*?': _tip,
+        'tip(?:'
+            '(\|node)'
+            '|(\|short)'
+            ')*': _tip,
         'update': _update,
         
         'incoming(\|count)?': _remote('incoming'),
