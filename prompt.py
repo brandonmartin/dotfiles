@@ -15,7 +15,7 @@ import os
 import subprocess
 from datetime import datetime, timedelta
 from os import path
-from mercurial import extensions, commands
+from mercurial import extensions, commands, help
 from mercurial.node import hex, short
 
 CACHE_PATH = ".hg/prompt/cache"
@@ -86,65 +86,7 @@ def prompt(ui, repo, fs='', **opts):
         $ hg prompt "{currently at {bookmark}}"
         currently at my-bookmark
     
-    The following keywords are available:
-    
-    - bookmark: the current bookmark (requires the bookmarks extension)
-    - branch: the current branch
-    - node: the (full) changeset hash of the current parent
-    - node|short: a short form of the changeset hash of the current parent
-    - node|merge: the (full) changeset hash of the changeset you're merging
-        with if you're currently merging, otherwise nothing.
-    - node|merge|short: a short form of the changeset hash of the changeset
-        you're merging with if you're currently merging, otherwise nothing
-    - patch: the topmost currently-applied patch (requires the mq extension)
-    - patch|count: the number of patches in the queue
-    - patch|applied: the number of currently applied patches
-    - patch|unapplied: the number of unapplied patches in the queue
-    - patches: the patches in the queue.  Supports many filters.
-    - rev: the repository-local changeset number of the current parent
-    - rev|merge: the repository-local changeset number of the changeset
-        you're merging with if you're currently merging, otherwise nothing
-    - root: the full path to the root of the current repository, without a 
-        trailing slash
-    - root|basename: the directory name of the root of the current
-        repository.  For example, if the repository is in '/home/u/myrepo'
-        then this keyword would expand to 'myrepo'.
-    - status: "!" if the current repository contains files that have been
-        modified, added, removed, or deleted, otherwise "?" if it contains
-        untracked (and not ignored) files, otherwise nothing.
-    - status|modified: "!" if the current repository contains files that
-        have been modified, added, removed, or deleted, otherwise nothing
-    - status|unknown: "?" if the current repository contains untracked
-        files, otherwise nothing
-    - status|modified|unknown: "!" if the current repository contains files
-        that have been modified, added, removed, or deleted, and "?" if it
-        contains untracked (and not ignored) files, otherwise nothing
-    - tags: the tags of the current parent, separated by a space
-    - tags|SEP: the tags of the current parent, separated by SEP
-    - task: the current task (requires the tasks extension)
-    - tip: the repository-local changeset number of the current tip
-    - tip|node: the (full) changeset hash of the current tip
-    - tip|node|short: a short form of the changeset hash of the current tip
-    - update: "^" if the current parent is not the tip of the current branch,
-        otherwise nothing.  In effect, this lets you see if running 
-        'hg update' would do something.
-    
-    There are also several keywords that deal with the status of remote
-    repositories.  They cache their results in .hg/prompt/cache/ and refresh
-    approximately every fifteen minutes to avoid overloading remote servers.
-    
-    - incoming: this keyword prints nothing on its own.  If the default
-        path contains incoming changesets the extra text will be expanded.
-        For example:
-            '{incoming changes{incoming}}' will expand to
-            'incoming changes' if there are changes, '' otherwise.
-    - incoming|count: the number of incoming changesets if greater than 0
-    - outgoing: this keyword prints nothing on its own.  If the current
-        repository contains outgoing changesets (to default) the extra text
-        will be expanded. For example:
-            '{outgoing changes{outgoing}}' will expand to
-            'outgoing changes' if there are changes, '' otherwise.
-    - outgoing|count: the number of outgoing changesets if greater than 0
+    See 'hg help prompt-keywords' for a list of available keywords.
     '''
     
     def _branch(m):
@@ -424,3 +366,156 @@ cmdtable = {
     ],
     'hg prompt STRING')
 }
+help.helptable += (
+    (['prompt-keywords', 'prompt-keywords'], ('Keywords supported by hg-prompt'),
+     (r'''hg-prompt currently supports a number of keywords.
+
+Some keywords support filters.  Filters can be chained when it makes
+sense to do so.  When in doubt, try it!
+
+bookmark
+    Display the current bookmark (requires the bookmarks extension).
+
+branch
+     Display the current branch.
+
+incoming
+     Display nothing, but if the default path contains incoming changesets the 
+     extra text will be expanded.
+     
+     For example: `{incoming changes{incoming}}` will expand to
+     `incoming changes` if there are changes, otherwise nothing.
+     
+     Checking for incoming changesets is an expensive operation, so `hg-prompt` 
+     will cache the results in `.hg/prompt/cache/` and refresh them every 15 
+     minutes.
+     
+     |count
+         Display the number of incoming changesets (if greater than 0).
+
+node
+     Display the (full) changeset hash of the current parent.
+     
+     |short
+         Display the hash as the short, 12-character form.
+     
+     |merge
+         Display the hash of the changeset you're merging with.
+
+outgoing
+     Display nothing, but if the current repository contains outgoing 
+     changesets (to default) the extra text will be expanded.
+     
+     For example: `{outgoing changes{outgoing}}` will expand to
+     `outgoing changes` if there are changes, otherwise nothing.
+     
+     Checking for outgoing changesets is an expensive operation, so `hg-prompt` 
+     will cache the results in `.hg/prompt/cache/` and refresh them every 15 
+     minutes.
+     
+     |count
+         Display the number of outgoing changesets (if greater than 0).
+
+patch
+     Display the topmost currently-applied patch (requires the mq
+     extension).
+     
+     |count
+         Display the number of patches in the queue.
+     
+     |applied
+         Display the number of currently applied patches in the queue.
+     
+     |unapplied
+         Display the number of currently unapplied patches in the queue.
+
+patches
+     Display a list of the current patches in the queue.  It will look like
+     this:
+     
+         :::console
+         $ hg prompt '{patches}'
+         bottom-patch -> middle-patch -> top-patch
+     
+     |reverse
+         Display the patches in reverse order (i.e. topmost first).
+     
+     |hide_applied
+         Do not display applied patches.
+     
+     |hide_unapplied
+         Do not display unapplied patches.
+     
+     |join(SEP)
+         Display SEP between each patch, instead of the default ` -> `.
+     
+     |pre_applied(STRING)
+         Display STRING immediately before each applied patch.  Useful for
+         adding color codes.
+     
+     |post_applied(STRING)
+         Display STRING immediately after each applied patch.  Useful for
+         resetting color codes.
+     
+     |pre_unapplied(STRING)
+         Display STRING immediately before each unapplied patch.  Useful for
+         adding color codes.
+     
+     |post_unapplied(STRING)
+         Display STRING immediately after each unapplied patch.  Useful for
+         resetting color codes.
+
+rev
+     Display the repository-local changeset number of the current parent.
+     
+     |merge
+         Display the repository-local changeset number of the changeset you're
+         merging with.
+
+root
+     Display the full path to the root of the current repository, without a 
+     trailing slash.
+     
+     |basename
+         Display the directory name of the root of the current repository. For 
+         example, if the repository is in `/home/u/myrepo` then this keyword
+         would expand to `myrepo`.
+
+status
+     Display `!` if the repository has any changed/added/removed files, 
+     otherwise `?` if it has any untracked (but not ignored) files, otherwise 
+     nothing.
+     
+     |modified
+         Display `!` if the current repository contains files that have been 
+         modified, added, removed, or deleted, otherwise nothing.
+     
+     |unknown
+         Display `?` if the current repository contains untracked files, 
+         otherwise nothing.
+
+tags
+     Display the tags of the current parent, separated by a space.
+     
+     |SEP
+         Display the tags of the current parent, separated by `SEP`.
+ 
+task
+     Display the current task (requires the tasks extension).
+
+tip
+     Display the repository-local changeset number of the current tip.
+     
+     |node
+         Display the (full) changeset hash of the current tip.
+     
+     |short
+         Display a short form of the changeset hash of the current tip (must be 
+         used with the **|node** filter)
+
+update
+     Display `^` if the current parent is not the tip of the current branch, 
+     otherwise nothing.  In effect, this lets you see if running `hg update` 
+     would do something.
+''')),
+)
