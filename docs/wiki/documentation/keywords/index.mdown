@@ -65,6 +65,42 @@ Some of the keywords support filters.  These filters can be combined when it mak
     |unapplied
     :   Display the number of currently unapplied patches in the queue.
 
+##patches##
+:   Display a list of the current patches in the queue.  It will look like
+    this:
+        
+        :::console
+        $ hg prompt '{patches}'
+        bottom-patch -> middle-patch -> top-patch
+    
+    |reverse
+    :   Display the patches in reverse order (i.e. topmost first).
+    
+    |hide_applied
+    :   Do not display applied patches.
+    
+    |hide_unapplied
+    :   Do not display unapplied patches.
+    
+    |join(SEP)
+    :   Display SEP between each patch, instead of the default ` -> `.
+    
+    |pre_applied(STRING)
+    :   Display STRING immediately before each applied patch.  Useful for
+        adding color codes.
+    
+    |post_applied(STRING)
+    :   Display STRING immediately after each applied patch.  Useful for
+        resetting color codes.
+    
+    |pre_unapplied(STRING)
+    :   Display STRING immediately before each unapplied patch.  Useful for
+        adding color codes.
+    
+    |post_unapplied(STRING)
+    :   Display STRING immediately after each unapplied patch.  Useful for
+        resetting color codes.
+
 ##rev##
 :   Display the repository-local changeset number of the current parent.
     
