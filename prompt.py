@@ -21,6 +21,8 @@ from mercurial.node import hex, short
 CACHE_PATH = ".hg/prompt/cache"
 CACHE_TIMEOUT = timedelta(minutes=15)
 
+FILTER_ARG = re.compile(r'\|.+\((.*)\)')
+
 def _cache_remote(repo, kind):
     cache = path.join(repo.root, CACHE_PATH, kind)
     c_tmp = cache + '.temp'
@@ -37,6 +39,24 @@ def _with_groups(g, out):
         print 'ERROR'
     return ("%s" + out + "%s") % (g[0][:-1] if g[0] else '',
                                   g[1][1:]  if g[1] else '')    
+
+def _get_filter(name, g):
+    '''Return the filter with the given name, or None if it was not used.'''
+    matching_filters = filter(lambda s: s and s.startswith('|%s' % name), g)
+    if not matching_filters:
+        return None
+    
+    # Later filters will override earlier ones, for now.
+    f = matching_filters[-1]
+    
+    return f
+
+def _get_filter_arg(f):
+    args = FILTER_ARG.match(f).groups()
+    if args:
+        return args[0]
+    else:
+        return None
 
 def prompt(ui, repo, fs='', **opts):
     '''get repository information for use in a shell prompt
