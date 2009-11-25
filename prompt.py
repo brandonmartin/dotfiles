@@ -232,6 +232,9 @@ def prompt(ui, repo, fs='', **opts):
         
         patches = repo.mq.series
         
+        if _get_filter('reverse', g):
+            patches = reversed(patches)
+        
         return _with_groups(out_g, sep.join(patches)) if patches else ''
     
     def _root(m):
@@ -318,7 +321,7 @@ def prompt(ui, repo, fs='', **opts):
         'branch': _branch,
         'node(?:(\|short)|(\|merge))*': _node,
         'patch(?:(\|applied)|(\|unapplied)|(\|count))?': _patch,
-        'patches(?:(\|join\(.*?\)))*': _patches,
+        'patches(?:(\|join\(.*?\))|(\|reverse))*': _patches,
         'rev(\|merge)?': _rev,
         'root': _root,
         'root\|basename': _basename,
