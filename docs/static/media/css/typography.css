@@ -33,15 +33,12 @@ strong {
 }
 
 a {
+    font-weight: bold;
 	text-decoration: none;
 }
 
 table#files a:hover, table#subdirs a:hover, table#pages a:hover {
 	color: #a00000;
-}
-
-a[href^="http:"] {
-	text-decoration: underline;
 }
 
 p#footer a {
