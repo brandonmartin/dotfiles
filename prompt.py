@@ -242,6 +242,28 @@ def prompt(ui, repo, fs='', **opts):
         if _get_filter('reverse', g):
             patches = reversed(patches)
         
+        pre_applied_filter = _get_filter('pre_applied', g)
+        pre_applied_filter_arg = _get_filter_arg(pre_applied_filter)
+        post_applied_filter = _get_filter('post_applied', g)
+        post_applied_filter_arg = _get_filter_arg(post_applied_filter)
+        
+        pre_unapplied_filter = _get_filter('pre_unapplied', g)
+        pre_unapplied_filter_arg = _get_filter_arg(pre_unapplied_filter)
+        post_unapplied_filter = _get_filter('post_unapplied', g)
+        post_unapplied_filter_arg = _get_filter_arg(post_unapplied_filter)
+        
+        for n, patch in enumerate(patches):
+            if patch in applied:
+                if pre_applied_filter:
+                    patches[n] = pre_applied_filter_arg + patches[n]
+                if post_applied_filter:
+                    patches[n] = patches[n] + post_applied_filter_arg
+            elif patch in unapplied:
+                if pre_unapplied_filter:
+                    patches[n] = pre_unapplied_filter_arg + patches[n]
+                if post_unapplied_filter:
+                    patches[n] = patches[n] + post_unapplied_filter_arg
+        
         return _with_groups(out_g, sep.join(patches)) if patches else ''
     
     def _root(m):
@@ -340,6 +362,10 @@ def prompt(ui, repo, fs='', **opts):
             '|(\|reverse)'
             '|(\|hide_applied)'
             '|(\|hide_unapplied)'
+            '|(\|pre_applied\(.*?\))'
+            '|(\|post_applied\(.*?\))'
+            '|(\|pre_unapplied\(.*?\))'
+            '|(\|post_unapplied\(.*?\))'
             ')*': _patches,
         'rev(\|merge)?': _rev,
         'root': _root,
