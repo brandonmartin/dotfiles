@@ -52,6 +52,9 @@ def _get_filter(name, g):
     return f
 
 def _get_filter_arg(f):
+    if not f:
+        return None
+    
     args = FILTER_ARG.match(f).groups()
     if args:
         return args[0]
@@ -192,7 +195,7 @@ def prompt(ui, repo, fs='', **opts):
     def _patch(m):
         g = m.groups()
         out_g = (g[0],) + (g[-1],)
-
+        
         try:
             extensions.find('mq')
         except KeyError:
@@ -212,6 +215,23 @@ def prompt(ui, repo, fs='', **opts):
                 out = applied[-1].name
         
         return _with_groups(out_g, out) if out else ''
+    
+    def _patches(m):
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+        
+        try:
+            extensions.find('mq')
+        except KeyError:
+            return ''
+        
+        join_filter = _get_filter('join', g)
+        join_filter_arg = _get_filter_arg(join_filter)
+        sep = join_filter_arg if join_filter else ' -> '
+        
+        patches = repo.mq.series
+        
+        return _with_groups(out_g, sep.join(patches)) if patches else ''
     
     def _root(m):
         return _with_groups(m.groups(), repo.root) if repo.root else ''
@@ -297,6 +317,7 @@ def prompt(ui, repo, fs='', **opts):
         'branch': _branch,
         'node(?:(\|short)|(\|merge))*': _node,
         'patch(?:(\|applied)|(\|unapplied)|(\|count))?': _patch,
+        'patches(?:(\|join\(.*?\)))*': _patches,
         'rev(\|merge)?': _rev,
         'root': _root,
         'root\|basename': _basename,
