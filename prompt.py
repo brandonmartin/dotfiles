@@ -100,6 +100,7 @@ def prompt(ui, repo, fs='', **opts):
     - patch|count: the number of patches in the queue
     - patch|applied: the number of currently applied patches
     - patch|unapplied: the number of unapplied patches in the queue
+    - patches: the patches in the queue.  Supports many filters.
     - rev: the repository-local changeset number of the current parent
     - rev|merge: the repository-local changeset number of the changeset
         you're merging with if you're currently merging, otherwise nothing
