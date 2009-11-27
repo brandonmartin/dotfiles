@@ -34,11 +34,14 @@ def _cache_remote(repo, kind):
     os.rename(c_tmp, cache)
     return
 
-def _with_groups(g, out):
-    if any(g) and not all(g):
-        print 'ERROR'
-    return ("%s" + out + "%s") % (g[0][:-1] if g[0] else '',
-                                  g[1][1:]  if g[1] else '')    
+def _with_groups(groups, out):
+    out_groups = [groups[0]] + [groups[-1]]
+    
+    if any(out_groups) and not all(out_groups):
+        print 'Error parsing prompt string.  Mismatched braces?'
+    
+    return ("%s" + out + "%s") % (out_groups[0][:-1] if out_groups[0] else '',
+                                  out_groups[1][1:] if out_groups[1] else '')    
 
 def _get_filter(name, g):
     '''Return the filter with the given name, or None if it was not used.'''
@@ -91,18 +94,16 @@ def prompt(ui, repo, fs='', **opts):
     
     def _branch(m):
         g = m.groups()
-        out_g = (g[0],) + (g[-1],)
         
         branch = repo.dirstate.branch()
         quiet = _get_filter('quiet', g)
         
         out = branch if (not quiet) or (branch != 'default') else ''
         
-        return _with_groups(out_g, out) if out else ''
+        return _with_groups(g, out) if out else ''
     
     def _status(m):
         g = m.groups()
-        out_g = (g[0],) + (g[-1],)
         
         st = repo.status(unknown=True)[:5]
         modified = any(st[:4])
@@ -117,7 +118,7 @@ def prompt(ui, repo, fs='', **opts):
             if '|unknown' in g:
                 flag += '?' if unknown else ''
         
-        return _with_groups(out_g, flag) if flag else ''
+        return _with_groups(g, flag) if flag else ''
     
     def _bookmark(m):
         try:
@@ -128,12 +129,11 @@ def prompt(ui, repo, fs='', **opts):
     
     def _tags(m):
         g = m.groups()
-        out_g = (g[0],) + (g[-1],)
         
         sep = g[1][1:] if g[1] else ' '
         tags = repo[None].tags()
         
-        return _with_groups(out_g, sep.join(tags)) if tags else ''
+        return _with_groups(g, sep.join(tags)) if tags else ''
     
     def _task(m):
         try:
@@ -144,7 +144,6 @@ def prompt(ui, repo, fs='', **opts):
     
     def _patch(m):
         g = m.groups()
-        out_g = (g[0],) + (g[-1],)
         
         try:
             extensions.find('mq')
@@ -165,11 +164,10 @@ def prompt(ui, repo, fs='', **opts):
         else:
             out = q.applied[-1].name if q.applied else ''
         
-        return _with_groups(out_g, out) if out else ''
+        return _with_groups(g, out) if out else ''
     
     def _patches(m):
         g = m.groups()
-        out_g = (g[0],) + (g[-1],)
         
         try:
             extensions.find('mq')
@@ -214,7 +212,7 @@ def prompt(ui, repo, fs='', **opts):
                 if post_unapplied_filter:
                     patches[n] = patches[n] + post_unapplied_filter_arg
         
-        return _with_groups(out_g, sep.join(patches)) if patches else ''
+        return _with_groups(g, sep.join(patches)) if patches else ''
     
     def _root(m):
         return _with_groups(m.groups(), repo.root) if repo.root else ''
@@ -229,18 +227,16 @@ def prompt(ui, repo, fs='', **opts):
     
     def _rev(m):
         g = m.groups()
-        out_g = (g[0],) + (g[-1],)
         
         parents = repo[None].parents()
         parent = 0 if '|merge' not in g else 1
         parent = parent if len(parents) > parent else None
         
         rev = parents[parent].rev() if parent is not None else -1
-        return _with_groups(out_g, str(rev)) if rev >= 0 else ''
+        return _with_groups(g, str(rev)) if rev >= 0 else ''
     
     def _tip(m):
         g = m.groups()
-        out_g = (g[0],) + (g[-1],)
         
         format = short if '|short' in g else hex
         
@@ -248,11 +244,10 @@ def prompt(ui, repo, fs='', **opts):
         rev = tip.rev()
         tip = format(tip.node()) if '|node' in g else tip.rev()
         
-        return _with_groups(out_g, str(tip)) if rev >= 0 else ''
+        return _with_groups(g, str(tip)) if rev >= 0 else ''
     
     def _node(m):
         g = m.groups()
-        out_g = (g[0],) + (g[-1],)
         
         parents = repo[None].parents()
         p = 0 if '|merge' not in g else 1
@@ -261,12 +256,11 @@ def prompt(ui, repo, fs='', **opts):
         format = short if '|short' in g else hex
         
         node = format(parents[p].node()) if p is not None else None
-        return _with_groups(out_g, str(node)) if node else ''
+        return _with_groups(g, str(node)) if node else ''
     
     def _remote(kind):
         def _r(m):
             g = m.groups()
-            out_g = (g[0],) + (g[-1],)
             
             cache_dir = path.join(repo.root, CACHE_PATH)
             cache = path.join(cache_dir, kind)
@@ -286,9 +280,9 @@ def prompt(ui, repo, fs='', **opts):
                 with open(cache) as c:
                     count = len(c.readlines())
                     if g[1]:
-                        return _with_groups(out_g, str(count)) if count else ''
+                        return _with_groups(g, str(count)) if count else ''
                     else:
-                        return _with_groups(out_g, '') if count else ''
+                        return _with_groups(g, '') if count else ''
             else:
                 return ''
         return _r
