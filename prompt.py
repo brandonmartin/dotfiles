@@ -90,8 +90,18 @@ def prompt(ui, repo, fs='', **opts):
     '''
     
     def _branch(m):
+        g = m.groups()
+        out_g = (g[0],) + (g[-1],)
+        
         branch = repo.dirstate.branch()
-        return _with_groups(m.groups(), branch) if branch else ''
+        out = ''
+        if '|nondefault' in g:
+            if (branch != 'default'):
+                out = branch
+        else:
+            out = branch
+        
+        return _with_groups(out_g, out) if out else ''
     
     def _status(m):
         g = m.groups()
@@ -152,6 +162,15 @@ def prompt(ui, repo, fs='', **opts):
             out = str(len(q.unapplied(repo)))
         elif '|count' in g:
             out = str(len(q.series))
+        elif '|anyapplied' in g:
+            if (len(q.series) > 0):
+                out = str(len(q.applied))
+        elif '|anyunapplied' in g:
+            if (len(q.series) > 0):
+                out = str(len(q.unapplied(repo)))
+        elif '|anycount' in g:
+            if (len(q.series) > 0):
+                out = str(len(q.series))
         else:
             applied = q.applied
             if applied:
@@ -289,7 +308,7 @@ def prompt(ui, repo, fs='', **opts):
     tag_end = r'(\}[^{}]*?)?\}'
     patterns = {
         'bookmark': _bookmark,
-        'branch': _branch,
+        'branch(\|nondefault)?': _branch,
         'node(?:'
             '(\|short)'
             '|(\|merge)'
@@ -298,6 +317,9 @@ def prompt(ui, repo, fs='', **opts):
             '(\|applied)'
             '|(\|unapplied)'
             '|(\|count)'
+            '|(\|anyapplied)'
+            '|(\|anyunapplied)'
+            '|(\|anycount)'
             ')?': _patch,
         'patches(?:'
             '(\|join\(.*?\))'
@@ -374,10 +396,13 @@ Some keywords support filters.  Filters can be chained when it makes
 sense to do so.  When in doubt, try it!
 
 bookmark
-    Display the current bookmark (requires the bookmarks extension).
+     Display the current bookmark (requires the bookmarks extension).
 
 branch
      Display the current branch.
+     
+     |nondefault
+         Display the current branch if it is not the default branch.
 
 incoming
      Display nothing, but if the default path contains incoming changesets the 
@@ -428,6 +453,18 @@ patch
      
      |unapplied
          Display the number of currently unapplied patches in the queue.
+     
+     |anycount
+         Display the number of patches in the queue if there are patches
+         present.
+     
+     |anyapplied
+         Display the number of currently applied patches in the queue if there
+         are patches present.
+     
+     |anyunapplied
+         Display the number of currently unapplied patches in the queue if
+         there are patches present.
 
 patches
      Display a list of the current patches in the queue.  It will look like
