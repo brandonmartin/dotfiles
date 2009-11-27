@@ -14,6 +14,9 @@ Some of the keywords support filters.  These filters can be combined when it mak
 
 ##branch##
 :   Display the current branch.
+    
+    |quiet
+    :   Display the current branch only if it is not the default branch.
 
 ##incoming##
 :   Display nothing, but if the default path contains incoming changesets the 
@@ -64,6 +67,9 @@ Some of the keywords support filters.  These filters can be combined when it mak
     
     |unapplied
     :   Display the number of currently unapplied patches in the queue.
+    
+    |quiet
+    :   Display a number only if there are any patches in the queue.
 
 ##patches##
 :   Display a list of the current patches in the queue.  It will look like

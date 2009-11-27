@@ -94,12 +94,9 @@ def prompt(ui, repo, fs='', **opts):
         out_g = (g[0],) + (g[-1],)
         
         branch = repo.dirstate.branch()
-        out = ''
-        if '|nondefault' in g:
-            if (branch != 'default'):
-                out = branch
-        else:
-            out = branch
+        quiet = _get_filter('quiet', g)
+        
+        out = branch if (not quiet) or (branch != 'default') else ''
         
         return _with_groups(out_g, out) if out else ''
     
@@ -155,26 +152,18 @@ def prompt(ui, repo, fs='', **opts):
             return ''
         
         q = repo.mq
-        out = ''
-        if '|applied' in g:
+        
+        if _get_filter('quiet', g) and not len(q.series):
+            return ''
+        
+        if _get_filter('applied', g):
             out = str(len(q.applied))
-        elif '|unapplied' in g:
+        elif _get_filter('unapplied', g):
             out = str(len(q.unapplied(repo)))
-        elif '|count' in g:
+        elif _get_filter('count', g):
             out = str(len(q.series))
-        elif '|anyapplied' in g:
-            if (len(q.series) > 0):
-                out = str(len(q.applied))
-        elif '|anyunapplied' in g:
-            if (len(q.series) > 0):
-                out = str(len(q.unapplied(repo)))
-        elif '|anycount' in g:
-            if (len(q.series) > 0):
-                out = str(len(q.series))
         else:
-            applied = q.applied
-            if applied:
-                out = applied[-1].name
+            out = q.applied[-1].name if q.applied else ''
         
         return _with_groups(out_g, out) if out else ''
     
@@ -308,7 +297,7 @@ def prompt(ui, repo, fs='', **opts):
     tag_end = r'(\}[^{}]*?)?\}'
     patterns = {
         'bookmark': _bookmark,
-        'branch(\|nondefault)?': _branch,
+        'branch(\|quiet)?': _branch,
         'node(?:'
             '(\|short)'
             '|(\|merge)'
@@ -317,10 +306,8 @@ def prompt(ui, repo, fs='', **opts):
             '(\|applied)'
             '|(\|unapplied)'
             '|(\|count)'
-            '|(\|anyapplied)'
-            '|(\|anyunapplied)'
-            '|(\|anycount)'
-            ')?': _patch,
+            '|(\|quiet)'
+            ')*': _patch,
         'patches(?:'
             '(\|join\(.*?\))'
             '|(\|reverse)'
@@ -401,8 +388,8 @@ bookmark
 branch
      Display the current branch.
      
-     |nondefault
-         Display the current branch if it is not the default branch.
+     |quiet
+         Display the current branch only if it is not the default branch.
 
 incoming
      Display nothing, but if the default path contains incoming changesets the 
@@ -454,17 +441,8 @@ patch
      |unapplied
          Display the number of currently unapplied patches in the queue.
      
-     |anycount
-         Display the number of patches in the queue if there are patches
-         present.
-     
-     |anyapplied
-         Display the number of currently applied patches in the queue if there
-         are patches present.
-     
-     |anyunapplied
-         Display the number of currently unapplied patches in the queue if
-         there are patches present.
+     |quiet
+         Display a number only if there are any patches in the queue.
 
 patches
      Display a list of the current patches in the queue.  It will look like
