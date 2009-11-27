@@ -2,7 +2,6 @@
 
 from nose import *
 from util import *
-from mercurial import commands
 
 
 @with_setup(setup_sandbox, teardown_sandbox)
@@ -16,7 +15,7 @@ def test_default_branch():
 
 @with_setup(setup_sandbox, teardown_sandbox)
 def test_non_default_branch():
-    commands.branch(get_sandbox_ui(), get_sandbox_repo(), 'test')
+    hg_branch('test')
     
     output = prompt(fs='{branch}')
     assert output == 'test'
@@ -33,7 +32,7 @@ def test_quiet_filter():
     output = prompt(fs='{on {branch|quiet}}')
     assert output == ''
     
-    commands.branch(get_sandbox_ui(), get_sandbox_repo(), 'test')
+    hg_branch('test')
     
     output = prompt(fs='{branch|quiet}')
     assert output == 'test'

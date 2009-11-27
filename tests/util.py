@@ -16,6 +16,7 @@ def prompt(fs=''):
     print output
     return output
 
+
 sandbox_path = os.path.join(os.path.realpath('.'), 'sandbox')
 
 def setup_sandbox():
@@ -33,3 +34,25 @@ def get_sandbox_repo():
 
 def get_sandbox_ui():
     return _ui
+
+
+# Mercurial command wrappers
+
+def hg_branch(branch='test'):
+    commands.branch(_ui, get_sandbox_repo(), branch)
+
+def hg_update(rev):
+    opts = { 'rev': str(rev) }
+    commands.update(_ui, get_sandbox_repo(), **opts)
+
+def hg_merge(rev):
+    opts = { 'rev': str(rev) }
+    commands.merge(_ui, get_sandbox_repo(), **opts)
+
+def hg_commit(filename='text.txt'):
+    with open(os.path.join(sandbox_path, filename), 'a') as test_file:
+        test_file.writelines(['test', '.'])
+    
+    opts = { 'addremove': True, 'date': None, 'user': 'Prompt Tester',
+             'logfile': None, 'message': "Sandbox commit." }
+    commands.commit(get_sandbox_ui(), get_sandbox_repo(), **opts)
