@@ -221,9 +221,13 @@ def prompt(ui, repo, fs='', **opts):
         return _with_groups(m.groups(), path.basename(repo.root)) if repo.root else ''
     
     def _update(m):
-        curr = repo[None].parents()[0]
-        to = repo[repo.branchtags()[curr.branch()]]
-        return _with_groups(m.groups(), '^') if curr != to else ''
+        if not repo.branchtags():
+            # We are in an empty repository.
+            return ''
+        
+        current_rev = repo[None].parents()[0]
+        to = repo[repo.branchtags()[current_rev.branch()]]
+        return _with_groups(m.groups(), '^') if current_rev != to else ''
     
     def _rev(m):
         g = m.groups()
