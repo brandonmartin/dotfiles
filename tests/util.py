@@ -42,7 +42,7 @@ def hg_branch(branch='test'):
     commands.branch(_ui, get_sandbox_repo(), branch)
 
 def hg_update(rev):
-    opts = { 'rev': str(rev) }
+    opts = { 'rev': str(rev), }
     commands.update(_ui, get_sandbox_repo(), **opts)
 
 def hg_merge(rev):
@@ -56,3 +56,13 @@ def hg_commit(filename='text.txt'):
     opts = { 'addremove': True, 'date': None, 'user': 'Prompt Tester',
              'logfile': None, 'message': "Sandbox commit." }
     commands.commit(get_sandbox_ui(), get_sandbox_repo(), **opts)
+
+def hg_log():
+    opts = { 'template': '{rev} {desc}\n', 'rev': None, 'date': None, 'user': None }
+    
+    _ui.pushbuffer()
+    commands.log(_ui, get_sandbox_repo(), **opts)
+    output = _ui.popbuffer()
+    
+    return output
+
