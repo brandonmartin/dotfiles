@@ -1,6 +1,5 @@
 '''Test output of {node}.'''
 
-import os
 from nose import *
 from util import *
 
