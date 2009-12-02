@@ -8,3 +8,7 @@ How the `hg prompt` command can be used.
 ##[Keywords](/hg-prompt/documentation/keywords/)##
 
 Keywords available to use with the command.
+
+##[Sample Prompts](/hg-prompt/documentation/samples/)##
+
+Some sample prompts to get you started.
