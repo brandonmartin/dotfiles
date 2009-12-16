@@ -34,4 +34,4 @@ This form will output the text and the expanded keyword **only** if the keyword 
 
 Take a look at the [keywords][] documentation to see all the keywords `hg-prompt` supports.
 
-[keywords]: /hg-prompt/documentation/keywords/
+[keywords]: /documentation/keywords/

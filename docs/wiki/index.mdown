@@ -15,10 +15,10 @@ hg-prompt
 [Code][]
 --------
 
-[Installation]: /hg-prompt/installation/
-[Quick Start]: /hg-prompt/quickstart/
-[Full Documentation]: /hg-prompt/documentation/
-[Code]: http://bitbucket.org/sjl/hg-prompt/
+[Installation]: /installation/
+[Quick Start]: /quickstart/
+[Full Documentation]: /documentation/
+[Code]: http://bitbucket.org/sjl
 
 Screenshot
 ----------

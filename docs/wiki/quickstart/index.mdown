@@ -5,7 +5,7 @@ This guide will get you up and running so you can put some useful information in
 
 If you haven't already [installed][install] it, do that now.
 
-[install]: /hg-prompt/installation/
+[install]: /installation/
 
 A Simple (But Useful) Prompt
 ----------------------------
@@ -49,4 +49,4 @@ Learn More
 
 From here you can take a look at the [full documentation][] to see all the interesting things `hg-prompt` can do.
 
-[full documentation]: /hg-prompt/documentation/
+[full documentation]: /documentation/

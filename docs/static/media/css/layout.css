@@ -1,3 +1,4 @@
+/* @override http://localhost:8008/media/css/layout.css */
 body, html {
 	background-color: #226F89;
 	margin: 0;
@@ -6,22 +7,21 @@ body, html {
 
 div#breadcrumbs {
 	border-bottom: 4px dashed #265565;
-	border-left: 1px solid #265565;
 	border-right: 1px solid #265565;
-	margin: 0 auto;
-	padding: 0.5em 1.5em;
+	padding: 0em 1.5em;
 	background-color: #fff;
 	width: 55em;
+	margin: 0em 0em 0em -1.5em;
 }
 div#breadcrumbs p {
-	margin-bottom: 0.2em;
+	margin: 0.5em auto;
 }
 div#content {
 	background-color: #fff;
 	height: 100%;
-	margin: 0 auto;
+	margin: 0 auto 3em;
 	overflow: hidden;
-	padding: 1em 1.5em 1.5em 1.5em;
+	padding: 0em 1.5em 0em 1.5em;
 	width: 55em;
 	border-left: 1px solid #265565;
 	border-right: 1px solid #265565;
@@ -47,20 +47,15 @@ a:hover {
 	color: #F14800;
 }
 
-div#footer {
+p#footer {
 	background-color: #fff;
-	border: 1px solid #265565;
 	border-top: 4px dashed #265565;
 	width: 55em;
-	padding: 1em 1.5em;
-	margin: 0 auto;
-	margin-bottom: 3em;
+	padding: 0.75em 1.5em;
 	text-align: center;
 	color: #666;
-}
-div#footer p {
-    margin: 0;
-    padding: 0;
+	margin-left: -1.5em;
+	margin-bottom: 0em;
 }
 
 ul {

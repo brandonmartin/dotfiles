@@ -1,7 +1,6 @@
 wiki-name: "hg-prompt"
 
 
-template-dir: ".templates"
 static-dir: "static"
 
 hide-prefix: "."
@@ -10,7 +9,6 @@ generate-listing: always
 listing-filename: "list.html"
 
 use-default-static: false
-use-default-templates: false
 
 markdown:
   safe_mode: false

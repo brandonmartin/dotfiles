@@ -3,7 +3,7 @@ Keywords
 
 There a number of keywords available.  If you have any suggestions for more please [let me know][issues].
 
-[issues]: http://bitbucket.org/sjl/hg-prompt/issues
+[issues]: http://bitbucket.org/sjl/issues
 
 Some of the keywords support filters.  These filters can be combined when it makes sense.  If in doubt, try it!
 
