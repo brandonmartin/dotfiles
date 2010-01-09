@@ -1,7 +1,8 @@
 Usage
 =====
 
-The `hg prompt` command takes a single string as an argument and outputs it.  Here's a simple (and useless) example:
+The `hg prompt` command takes a single string as an argument and outputs it.
+Here's a simple (and useless) example:
 
     :::console
     $ hg prompt "test"
@@ -18,7 +19,9 @@ Keywords also have an extended form:
     :::text
     {optional text{branch}more optional text}
 
-This form will output the text and the expanded keyword **only** if the keyword successfully expands.  This can be useful for displaying extra text only if it's applicable:
+This form will output the text and the expanded keyword **only** if the
+keyword successfully expands. This can be useful for displaying extra text
+only if it's applicable:
 
     :::console
     $ hg prompt "currently on {branch} and at {bookmark}"
@@ -32,6 +35,19 @@ This form will output the text and the expanded keyword **only** if the keyword 
     $ hg prompt "currently on {branch} {and at {bookmark}}"
     currently on branch default and at my-book
 
-Take a look at the [keywords][] documentation to see all the keywords `hg-prompt` supports.
+You can give the `--angle-brackets` option to use angle brackets for keywords
+instead of curly brackets. This can come in handy when combining a simple
+prompt string with more complicated shell functionality (like color
+variables):
+
+    :::console
+    $ hg prompt "{currently on {branch}}"
+    currently on default
+    
+    $ hg prompt --angle-brackets "<currently on <branch>>"
+    currently on default
+
+Take a look at the [keywords][] documentation to see all the keywords
+`hg-prompt` supports.
 
 [keywords]: /documentation/keywords/
