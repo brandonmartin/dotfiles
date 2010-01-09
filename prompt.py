@@ -40,6 +40,7 @@ def _with_groups(groups, out):
     if any(out_groups) and not all(out_groups):
         print 'Error parsing prompt string.  Mismatched braces?'
     
+    out = out.replace('%', '%%')
     return ("%s" + out + "%s") % (out_groups[0][:-1] if out_groups[0] else '',
                                   out_groups[1][1:] if out_groups[1] else '')    
 
@@ -291,8 +292,16 @@ def prompt(ui, repo, fs='', **opts):
                 return ''
         return _r
     
-    tag_start = r'\{([^{}]*?\{)?'
-    tag_end = r'(\}[^{}]*?)?\}'
+    
+    if opts.get("angle_brackets"):
+        tag_start = r'\<([^><]*?\<)?'
+        tag_end = r'(\>[^><]*?)?>'
+        brackets = '<>'
+    else:
+        tag_start = r'\{([^{}]*?\{)?'
+        tag_end = r'(\}[^{}]*?)?\}'
+        brackets = '{}'
+    
     patterns = {
         'bookmark': _bookmark,
         'branch(\|quiet)?': _branch,
@@ -306,15 +315,15 @@ def prompt(ui, repo, fs='', **opts):
             '|(\|count)'
             '|(\|quiet)'
             ')*': _patch,
-        'patches(?:'
-            '(\|join\(.*?\))'
-            '|(\|reverse)'
-            '|(\|hide_applied)'
-            '|(\|hide_unapplied)'
-            '|(\|pre_applied\(.*?\))'
-            '|(\|post_applied\(.*?\))'
-            '|(\|pre_unapplied\(.*?\))'
-            '|(\|post_unapplied\(.*?\))'
+        'patches(?:' +
+            '(\|join\([^%s]*?\))' % brackets[-1] +
+            '|(\|reverse)' +
+            '|(\|hide_applied)' +
+            '|(\|hide_unapplied)' +
+            '|(\|pre_applied\([^%s]*?\))' % brackets[-1] +
+            '|(\|post_applied\([^%s]*?\))' % brackets[-1] +
+            '|(\|pre_unapplied\([^%s]*?\))' % brackets[-1] +
+            '|(\|post_unapplied\([^%s]*?\))' % brackets[-1] +
             ')*': _patches,
         'rev(\|merge)?': _rev,
         'root': _root,
@@ -323,7 +332,7 @@ def prompt(ui, repo, fs='', **opts):
             '(\|modified)'
             '|(\|unknown)'
             ')*': _status,
-        'tags(\|[^}]*)?': _tags,
+        'tags(\|[^%s]*?)?' % brackets[-1]: _tags,
         'task': _task,
         'tip(?:'
             '(\|node)'
@@ -368,6 +377,7 @@ def uisetup(ui):
 cmdtable = {
     "prompt": 
     (prompt, [
+        ('', 'angle-brackets', None, 'use angle brackets (<>) for keywords'),
         ('', 'cache-incoming', None, 'used internally by hg-prompt'),
         ('', 'cache-outgoing', None, 'used internally by hg-prompt'),
     ],
