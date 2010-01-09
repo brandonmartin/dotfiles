@@ -22,6 +22,7 @@ Make sure everything is working:
     $ hg prompt 'test'
     test
 
-Take a look at the [Quick Start][] guide to learn how to put some useful information into your shell prompt.
+Take a look at the [Quick Start][] guide to learn how to put some useful
+information into your shell prompt.
 
 [Quick Start]: /quickstart/

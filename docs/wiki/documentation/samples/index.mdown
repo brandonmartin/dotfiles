@@ -14,7 +14,8 @@ A very simple prompt could tell you:
 
 * Which named branch you're currently working on.
 * If there are any uncommitted changes in the working directory.
-* If you're at a revision that's not a branch tip (i.e. if running `hg update` would do something).
+* If you're at a revision that's not a branch tip (i.e. if running `hg update`
+  would do something).
 
 To get a prompt like this you could add this to your `~/.bashrc` file:
 

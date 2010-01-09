@@ -1,7 +1,8 @@
 Quick Start
 ===========
 
-This guide will get you up and running so you can put some useful information into your shell prompt.
+This guide will get you up and running so you can put some useful information
+into your shell prompt.
 
 If you haven't already [installed][install] it, do that now.
 
@@ -19,7 +20,9 @@ Edit your `~/.bashrc` file to include something like this:
     
     export PS1='\u at \h in \w$(hg_ps1)\n$ '
 
-`source ~/.bashrc` after to test it out.  Make sure you're in a Mercurial repository or you won't see anything.  This little prompt will give you something like this:
+`source ~/.bashrc` after to test it out. Make sure you're in a Mercurial
+repository or you won't see anything. This little prompt will give you
+something like this:
 
     :::console
     steve at myhost in ~/src/hg-prompt on default at feature-bookmark?
@@ -47,6 +50,7 @@ And the result (this example assumes one incoming changeset and two outgoing):
 Learn More
 ----------
 
-From here you can take a look at the [full documentation][] to see all the interesting things `hg-prompt` can do.
+From here you can take a look at the [full documentation][] to see all the
+interesting things `hg-prompt` can do.
 
 [full documentation]: /documentation/
