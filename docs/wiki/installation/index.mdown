@@ -8,7 +8,7 @@ Installing `hg-prompt` requires [Python][] 2.5+ and (obviously) Mercurial.
 First, clone the repository:
 
     :::console
-    $ hg clone http://bitbucket.org/sjl/
+    $ hg clone http://bitbucket.org/sjl/hg-prompt/
 
 Edit the `[extensions]` section in your `~/.hgrc` file:
 
