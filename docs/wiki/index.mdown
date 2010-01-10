@@ -25,4 +25,4 @@ shell prompt.
 Screenshot
 ----------
 
-![My bash prompt while using hg-prompt.](http://stevelosh.com/site-media/storage/projects/2009-06-19-hg-prompt/hg-prompt.png "My bash prompt while using hg-prompt.")
+![My bash prompt while using hg-prompt.](http://stevelosh.com/media/images/projects/hg-prompt/prompt.png "My bash prompt while using hg-prompt.")
