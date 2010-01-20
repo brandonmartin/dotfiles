@@ -123,7 +123,7 @@ def prompt(ui, repo, fs='', **opts):
     
     def _bookmark(m):
         try:
-            book = extensions.find('bookmarks').current(repo)
+            book = getattr(repo, '_bookmarkcurrent', None)
             return _with_groups(m.groups(), book) if book else ''
         except KeyError:
             return ''
