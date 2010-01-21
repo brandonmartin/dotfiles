@@ -123,10 +123,10 @@ def prompt(ui, repo, fs='', **opts):
     
     def _bookmark(m):
         try:
+            book = extensions.find('bookmarks').current(repo)
+        except AttributeError:
             book = getattr(repo, '_bookmarkcurrent', None)
-            return _with_groups(m.groups(), book) if book else ''
-        except KeyError:
-            return ''
+        return _with_groups(m.groups(), book) if book else ''
     
     def _tags(m):
         g = m.groups()
