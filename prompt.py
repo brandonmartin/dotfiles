@@ -181,7 +181,7 @@ def prompt(ui, repo, fs='', **opts):
         
         patches = repo.mq.series
         applied = [p.name for p in repo.mq.applied]
-        unapplied = [p[1] for p in repo.mq.unapplied(repo)]
+        unapplied = filter(lambda x: x not in applied, patches)
         
         if _get_filter('hide_applied', g):
             patches = filter(lambda p: p not in applied, patches)
