@@ -407,7 +407,7 @@ branch
 
 count
      Display the number of revisions in the given revset (the revset `all()`
-     will be used if none is given.
+     will be used if none is given).
 
      See `hg help revsets` for more information.
 
