@@ -15,7 +15,7 @@ import os
 import subprocess
 from datetime import datetime, timedelta
 from os import path
-from mercurial import extensions, commands, help
+from mercurial import extensions, commands, cmdutil, help
 from mercurial.node import hex, short
 
 CACHE_PATH = ".hg/prompt/cache"
@@ -135,6 +135,11 @@ def prompt(ui, repo, fs='', **opts):
         tags = repo[None].tags()
         
         return _with_groups(g, sep.join(tags)) if tags else ''
+    
+    def _count(m):
+        g = m.groups()
+        query = [g[1][1:]] if g[1] else ['all()']
+        return _with_groups(g, str(len(cmdutil.revrange(repo, query))))
     
     def _task(m):
         try:
@@ -305,6 +310,7 @@ def prompt(ui, repo, fs='', **opts):
     patterns = {
         'bookmark': _bookmark,
         'branch(\|quiet)?': _branch,
+        'count(\|[^%s]*?)?' % brackets[-1]: _count,
         'node(?:'
             '(\|short)'
             '|(\|merge)'
@@ -398,6 +404,15 @@ branch
      
      |quiet
          Display the current branch only if it is not the default branch.
+
+count
+     Display the number of revisions in the given revset (the revset `all()`
+     will be used if none is given.
+     
+     See `hg help revsets` for more information.
+     
+     |REVSET
+         The revset to count.
 
 incoming
      Display nothing, but if the default path contains incoming changesets the 
