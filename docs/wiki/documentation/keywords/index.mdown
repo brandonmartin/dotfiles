@@ -18,6 +18,15 @@ Some of the keywords support filters.  These filters can be combined when it mak
     |quiet
     :   Display the current branch only if it is not the default branch.
 
+##count##
+:   Display the number of revisions in the given revset (the revset `all()`
+    will be used if none is given.
+    
+    See `hg help revsets` for more information.
+    
+    |REVSET
+    :   The revset to count.
+
 ##incoming##
 :   Display nothing, but if the default path contains incoming changesets the 
     extra text will be expanded.
