@@ -20,7 +20,7 @@ Some of the keywords support filters.  These filters can be combined when it mak
 
 ##count##
 :   Display the number of revisions in the given revset (the revset `all()`
-    will be used if none is given.
+    will be used if none is given).
     
     See `hg help revsets` for more information.
     
