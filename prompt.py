@@ -103,6 +103,20 @@ def prompt(ui, repo, fs='', **opts):
 
         return _with_groups(g, out) if out else ''
 
+    def _closed(m):
+        g = m.groups()
+
+        quiet = _get_filter('quiet', g)
+
+        p = repo[None].parents()[0]
+        pn = p.node()
+        branch = repo.dirstate.branch()
+        closed = (p.extra().get('close')
+                  and pn in repo.branchheads(branch, closed=True))
+        out = 'X' if (not quiet) and closed else ''
+
+        return _with_groups(g, out) if out else ''
+
     def _status(m):
         g = m.groups()
 
@@ -311,6 +325,7 @@ def prompt(ui, repo, fs='', **opts):
         'bookmark': _bookmark,
         'branch(\|quiet)?': _branch,
         'count(\|[^%s]*?)?' % brackets[-1]: _count,
+        'closed(\|quiet)?': _closed,
         'node(?:'
             '(\|short)'
             '|(\|merge)'
@@ -404,6 +419,10 @@ branch
 
      |quiet
          Display the current branch only if it is not the default branch.
+
+closed
+     Display `X` if working on a closed branch (i.e. committing now would reopen
+     the branch).
 
 count
      Display the number of revisions in the given revset (the revset `all()`

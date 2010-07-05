@@ -1,11 +1,13 @@
 Keywords
 ========
 
-There a number of keywords available.  If you have any suggestions for more please [let me know][issues].
+There a number of keywords available.  If you have any suggestions for more
+please [let me know][issues].
 
 [issues]: http://bitbucket.org/sjl/issues
 
-Some of the keywords support filters.  These filters can be combined when it makes sense.  If in doubt, try it!
+Some of the keywords support filters.  These filters can be combined when it
+makes sense.  If in doubt, try it!
 
 [TOC]
 
@@ -17,6 +19,10 @@ Some of the keywords support filters.  These filters can be combined when it mak
     
     |quiet
     :   Display the current branch only if it is not the default branch.
+
+##closed##
+:   Display `X` if working on a closed branch (i.e. if committing now would
+    reopen the branch).
 
 ##count##
 :   Display the number of revisions in the given revset (the revset `all()`
