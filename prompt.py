@@ -311,6 +311,23 @@ def prompt(ui, repo, fs='', **opts):
                 return ''
         return _r
 
+    def _queue(m):
+        g = m.groups()
+
+        try:
+            extensions.find('mq')
+        except KeyError:
+            return ''
+
+        q = repo.mq
+
+        out = os.path.basename(q.path)
+        if out == 'patches' and not os.path.isdir(q.path):
+            out = ''
+        elif out.startswith('patches-'):
+            out = out[8:]
+
+        return _with_groups(g, out) if out else ''
 
     if opts.get("angle_brackets"):
         tag_start = r'\<([^><]*?\<)?'
@@ -346,6 +363,7 @@ def prompt(ui, repo, fs='', **opts):
             '|(\|pre_unapplied\([^%s]*?\))' % brackets[-1] +
             '|(\|post_unapplied\([^%s]*?\))' % brackets[-1] +
             ')*': _patches,
+        'queue': _queue,
         'rev(\|merge)?': _rev,
         'root': _root,
         'root\|basename': _basename,
@@ -521,6 +539,9 @@ patches
      |post_unapplied(STRING)
          Display STRING immediately after each unapplied patch.  Useful for
          resetting color codes.
+
+queue
+     Display the name of the current MQ queue.
 
 rev
      Display the repository-local changeset number of the current parent.

@@ -122,6 +122,9 @@ makes sense.  If in doubt, try it!
     :   Display STRING immediately after each unapplied patch.  Useful for
         resetting color codes.
 
+##queue##
+:   Display the name of the current MQ queue.
+
 ##rev##
 :   Display the repository-local changeset number of the current parent.
     
