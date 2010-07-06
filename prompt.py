@@ -93,6 +93,16 @@ def prompt(ui, repo, fs='', **opts):
     See 'hg help prompt-keywords' for a list of available keywords.
     '''
 
+    def _basename(m):
+        return _with_groups(m.groups(), path.basename(repo.root)) if repo.root else ''
+
+    def _bookmark(m):
+        try:
+            book = extensions.find('bookmarks').current(repo)
+        except AttributeError:
+            book = getattr(repo, '_bookmarkcurrent', None)
+        return _with_groups(m.groups(), book) if book else ''
+
     def _branch(m):
         g = m.groups()
 
@@ -117,50 +127,22 @@ def prompt(ui, repo, fs='', **opts):
 
         return _with_groups(g, out) if out else ''
 
-    def _status(m):
-        g = m.groups()
-
-        st = repo.status(unknown=True)[:5]
-        modified = any(st[:4])
-        unknown = len(st[-1]) > 0
-
-        flag = ''
-        if '|modified' not in g and '|unknown' not in g:
-            flag = '!' if modified else '?' if unknown else ''
-        else:
-            if '|modified' in g:
-                flag += '!' if modified else ''
-            if '|unknown' in g:
-                flag += '?' if unknown else ''
-
-        return _with_groups(g, flag) if flag else ''
-
-    def _bookmark(m):
-        try:
-            book = extensions.find('bookmarks').current(repo)
-        except AttributeError:
-            book = getattr(repo, '_bookmarkcurrent', None)
-        return _with_groups(m.groups(), book) if book else ''
-
-    def _tags(m):
-        g = m.groups()
-
-        sep = g[1][1:] if g[1] else ' '
-        tags = repo[None].tags()
-
-        return _with_groups(g, sep.join(tags)) if tags else ''
-
     def _count(m):
         g = m.groups()
         query = [g[1][1:]] if g[1] else ['all()']
         return _with_groups(g, str(len(cmdutil.revrange(repo, query))))
 
-    def _task(m):
-        try:
-            task = extensions.find('tasks').current(repo)
-            return _with_groups(m.groups(), task) if task else ''
-        except KeyError:
-            return ''
+    def _node(m):
+        g = m.groups()
+
+        parents = repo[None].parents()
+        p = 0 if '|merge' not in g else 1
+        p = p if len(parents) > p else None
+
+        format = short if '|short' in g else hex
+
+        node = format(parents[p].node()) if p is not None else None
+        return _with_groups(g, str(node)) if node else ''
 
     def _patch(m):
         g = m.groups()
@@ -234,53 +216,23 @@ def prompt(ui, repo, fs='', **opts):
 
         return _with_groups(g, sep.join(patches)) if patches else ''
 
-    def _root(m):
-        return _with_groups(m.groups(), repo.root) if repo.root else ''
+    def _queue(m):
+        g = m.groups()
 
-    def _basename(m):
-        return _with_groups(m.groups(), path.basename(repo.root)) if repo.root else ''
-
-    def _update(m):
-        if not repo.branchtags():
-            # We are in an empty repository.
+        try:
+            extensions.find('mq')
+        except KeyError:
             return ''
 
-        current_rev = repo[None].parents()[0]
-        to = repo[repo.branchtags()[current_rev.branch()]]
-        return _with_groups(m.groups(), '^') if current_rev != to else ''
+        q = repo.mq
 
-    def _rev(m):
-        g = m.groups()
+        out = os.path.basename(q.path)
+        if out == 'patches' and not os.path.isdir(q.path):
+            out = ''
+        elif out.startswith('patches-'):
+            out = out[8:]
 
-        parents = repo[None].parents()
-        parent = 0 if '|merge' not in g else 1
-        parent = parent if len(parents) > parent else None
-
-        rev = parents[parent].rev() if parent is not None else -1
-        return _with_groups(g, str(rev)) if rev >= 0 else ''
-
-    def _tip(m):
-        g = m.groups()
-
-        format = short if '|short' in g else hex
-
-        tip = repo[len(repo) - 1]
-        rev = tip.rev()
-        tip = format(tip.node()) if '|node' in g else tip.rev()
-
-        return _with_groups(g, str(tip)) if rev >= 0 else ''
-
-    def _node(m):
-        g = m.groups()
-
-        parents = repo[None].parents()
-        p = 0 if '|merge' not in g else 1
-        p = p if len(parents) > p else None
-
-        format = short if '|short' in g else hex
-
-        node = format(parents[p].node()) if p is not None else None
-        return _with_groups(g, str(node)) if node else ''
+        return _with_groups(g, out) if out else ''
 
     def _remote(kind):
         def _r(m):
@@ -311,23 +263,72 @@ def prompt(ui, repo, fs='', **opts):
                 return ''
         return _r
 
-    def _queue(m):
+    def _rev(m):
         g = m.groups()
 
+        parents = repo[None].parents()
+        parent = 0 if '|merge' not in g else 1
+        parent = parent if len(parents) > parent else None
+
+        rev = parents[parent].rev() if parent is not None else -1
+        return _with_groups(g, str(rev)) if rev >= 0 else ''
+
+    def _root(m):
+        return _with_groups(m.groups(), repo.root) if repo.root else ''
+
+    def _status(m):
+        g = m.groups()
+
+        st = repo.status(unknown=True)[:5]
+        modified = any(st[:4])
+        unknown = len(st[-1]) > 0
+
+        flag = ''
+        if '|modified' not in g and '|unknown' not in g:
+            flag = '!' if modified else '?' if unknown else ''
+        else:
+            if '|modified' in g:
+                flag += '!' if modified else ''
+            if '|unknown' in g:
+                flag += '?' if unknown else ''
+
+        return _with_groups(g, flag) if flag else ''
+
+    def _tags(m):
+        g = m.groups()
+
+        sep = g[1][1:] if g[1] else ' '
+        tags = repo[None].tags()
+
+        return _with_groups(g, sep.join(tags)) if tags else ''
+
+    def _task(m):
         try:
-            extensions.find('mq')
+            task = extensions.find('tasks').current(repo)
+            return _with_groups(m.groups(), task) if task else ''
         except KeyError:
             return ''
 
-        q = repo.mq
+    def _tip(m):
+        g = m.groups()
 
-        out = os.path.basename(q.path)
-        if out == 'patches' and not os.path.isdir(q.path):
-            out = ''
-        elif out.startswith('patches-'):
-            out = out[8:]
+        format = short if '|short' in g else hex
 
-        return _with_groups(g, out) if out else ''
+        tip = repo[len(repo) - 1]
+        rev = tip.rev()
+        tip = format(tip.node()) if '|node' in g else tip.rev()
+
+        return _with_groups(g, str(tip)) if rev >= 0 else ''
+
+    def _update(m):
+        if not repo.branchtags():
+            # We are in an empty repository.
+            return ''
+
+        current_rev = repo[None].parents()[0]
+        to = repo[repo.branchtags()[current_rev.branch()]]
+        return _with_groups(m.groups(), '^') if current_rev != to else ''
+
 
     if opts.get("angle_brackets"):
         tag_start = r'\<([^><]*?\<)?'
@@ -341,8 +342,8 @@ def prompt(ui, repo, fs='', **opts):
     patterns = {
         'bookmark': _bookmark,
         'branch(\|quiet)?': _branch,
-        'count(\|[^%s]*?)?' % brackets[-1]: _count,
         'closed(\|quiet)?': _closed,
+        'count(\|[^%s]*?)?' % brackets[-1]: _count,
         'node(?:'
             '(\|short)'
             '|(\|merge)'
