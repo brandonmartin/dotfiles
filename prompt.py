@@ -157,7 +157,12 @@ def prompt(ui, repo, fs='', **opts):
         if _get_filter('quiet', g) and not len(q.series):
             return ''
 
-        if _get_filter('applied', g):
+        if _get_filter('topindex', g):
+            if len(q.applied):
+                out = str(len(q.applied) - 1)
+            else:
+                out = ''
+        elif _get_filter('applied', g):
             out = str(len(q.applied))
         elif _get_filter('unapplied', g):
             out = str(len(q.unapplied(repo)))
@@ -349,7 +354,8 @@ def prompt(ui, repo, fs='', **opts):
             '|(\|merge)'
             ')*': _node,
         'patch(?:'
-            '(\|applied)'
+            '(\|topindex)'
+            '|(\|applied)'
             '|(\|unapplied)'
             '|(\|count)'
             '|(\|quiet)'
@@ -495,6 +501,11 @@ patch
 
      |count
          Display the number of patches in the queue.
+
+     |topindex
+         Display (zero-based) index of the topmost applied patch in the series
+         list (as displayed by :hg:`qtop -v`, or the empty string if no patch
+         is applied.
 
      |applied
          Display the number of currently applied patches in the queue.
