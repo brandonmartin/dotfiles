@@ -504,7 +504,7 @@ patch
 
      |topindex
          Display (zero-based) index of the topmost applied patch in the series
-         list (as displayed by :hg:`qtop -v`, or the empty string if no patch
+         list (as displayed by :hg:`qtop -v`), or the empty string if no patch
          is applied.
 
      |applied
