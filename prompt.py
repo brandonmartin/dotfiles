@@ -419,6 +419,10 @@ def _push_with_cache(orig, ui, repo, *args, **opts):
 def uisetup(ui):
     extensions.wrapcommand(commands.table, 'pull', _pull_with_cache)
     extensions.wrapcommand(commands.table, 'push', _push_with_cache)
+    try:
+        extensions.wrapcommand(extensions.find("fetch").cmdtable, 'fetch', _pull_with_cache)
+    except KeyError:
+        pass
 
 cmdtable = {
     "prompt":
