@@ -101,6 +101,8 @@ def prompt(ui, repo, fs='', **opts):
             book = extensions.find('bookmarks').current(repo)
         except AttributeError:
             book = getattr(repo, '_bookmarkcurrent', None)
+        except KeyError:
+            book = getattr(repo, '_bookmarkcurrent', None)
         return _with_groups(m.groups(), book) if book else ''
 
     def _branch(m):
