@@ -1,0 +1,6 @@
+[ui]
+username = Brandon Martin <b@heyomayeah.com>
+verbose = True
+
+[extensions]
+prompt = ~/GIT/hg-prompt/prompt.py
