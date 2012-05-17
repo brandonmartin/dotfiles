@@ -33,4 +33,14 @@ export LANG=en_US.UTF-8
 
 source /etc/profile
 
+# Prefer VIM if installed
+if [ -x $(which vim) ]; then
+  export EDITOR=vim
+fi
+
+# plz dont ask..
+if [ -d "/opt/python2.7/bin" ]; then
+  export PATH="/opt/python2.7/bin:${PATH}"
+fi
+
 umask 022
