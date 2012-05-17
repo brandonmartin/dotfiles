@@ -28,7 +28,7 @@ def _cache_remote(repo, kind):
     c_tmp = cache + '.temp'
 
     # This is kind of a hack and I feel a little bit dirty for doing it.
-    IGNORE = open('NUL:','w') if subprocess.mswindows else open('/dev/null','w')
+    open('/dev/null','w')
 
     subprocess.call(['hg', kind, '--quiet'], stdout=file(c_tmp, 'w'), stderr=IGNORE)
     os.rename(c_tmp, cache)
@@ -41,8 +41,19 @@ def _with_groups(groups, out):
         print 'Error parsing prompt string.  Mismatched braces?'
 
     out = out.replace('%', '%%')
-    return ("%s" + out + "%s") % (out_groups[0][:-1] if out_groups[0] else '',
-                                  out_groups[1][1:] if out_groups[1] else '')
+    if (out_groups[0]):
+        foo = out_groups[0][:-1]
+    else:
+        foo = ''
+
+    if (out_groups[1]):
+        bar = out_groups[1][1:]
+    else:
+        bar = ''
+
+    return ("%s" + out + "%s") % (foo, bar)
+#    return ("%s" + out + "%s") % (out_groups[0][:-1] if out_groups[0] else '',
+#                                  out_groups[1][1:] if out_groups[1] else '')
 
 def _get_filter(name, g):
     '''Return the filter with the given name, or None if it was not used.'''
@@ -94,7 +105,10 @@ def prompt(ui, repo, fs='', **opts):
     '''
 
     def _basename(m):
-        return _with_groups(m.groups(), path.basename(repo.root)) if repo.root else ''
+        if repo.root:
+            return _with_groups(m.groups(), path.basename(repo.root))
+        else:
+            return ''
 
     def _bookmark(m):
         try:
@@ -103,7 +117,10 @@ def prompt(ui, repo, fs='', **opts):
             book = getattr(repo, '_bookmarkcurrent', None)
         except KeyError:
             book = getattr(repo, '_bookmarkcurrent', None)
-        return _with_groups(m.groups(), book) if book else ''
+        if book:
+            return _with_groups(m.groups(), book)
+        else:
+            return ''
 
     def _branch(m):
         g = m.groups()
@@ -111,9 +128,14 @@ def prompt(ui, repo, fs='', **opts):
         branch = repo.dirstate.branch()
         quiet = _get_filter('quiet', g)
 
-        out = branch if (not quiet) or (branch != 'default') else ''
-
-        return _with_groups(g, out) if out else ''
+        if (not quiet) or (branch != 'default'):
+            out = branch 
+        else:
+            out = ''
+        if out:
+            return _with_groups(g, out)
+        else:
+            return ''
 
     def _closed(m):
         g = m.groups()
@@ -125,26 +147,51 @@ def prompt(ui, repo, fs='', **opts):
         branch = repo.dirstate.branch()
         closed = (p.extra().get('close')
                   and pn in repo.branchheads(branch, closed=True))
-        out = 'X' if (not quiet) and closed else ''
+        if (not quiet) and closed:
+            out = 'X'
+        else:
+            out = ''
 
-        return _with_groups(g, out) if out else ''
+        if out:
+            return _with_groups(g, out)
+        else:
+            return ''
 
     def _count(m):
         g = m.groups()
-        query = [g[1][1:]] if g[1] else ['all()']
+        if g[1]:
+            query = [g[1][1:]] 
+        else:
+            query = ['all()']
         return _with_groups(g, str(len(cmdutil.revrange(repo, query))))
 
     def _node(m):
         g = m.groups()
 
         parents = repo[None].parents()
-        p = 0 if '|merge' not in g else 1
-        p = p if len(parents) > p else None
+        if '|merge' not in g:
+            p = 0
+        else:
+            p = 1
+        if len(parents) > p:
+            p = p
+        else:
+            p = None
 
-        format = short if '|short' in g else hex
+        if '|short' in g:
+            format = short
+        else:
+            format = hex
 
-        node = format(parents[p].node()) if p is not None else None
-        return _with_groups(g, str(node)) if node else ''
+        if p is not None:
+            node = format(parents[p].node())
+        else:
+            node = None
+
+        if node:
+            return _with_groups(g, str(node))
+        else:
+            return ''
 
     def _patch(m):
         g = m.groups()
@@ -171,9 +218,15 @@ def prompt(ui, repo, fs='', **opts):
         elif _get_filter('count', g):
             out = str(len(q.series))
         else:
-            out = q.applied[-1].name if q.applied else ''
+            if q.applied:
+                out = q.applied[-1].name
+            else:
+                out = ''
 
-        return _with_groups(g, out) if out else ''
+        if out:
+            return _with_groups(g, out) 
+        else:
+            return ''
 
     def _patches(m):
         g = m.groups()
@@ -185,7 +238,10 @@ def prompt(ui, repo, fs='', **opts):
 
         join_filter = _get_filter('join', g)
         join_filter_arg = _get_filter_arg(join_filter)
-        sep = join_filter_arg if join_filter else ' -> '
+        if join_filter:
+            sep = join_filter_arg 
+        else:
+            sep = ' -> '
 
         patches = repo.mq.series
         applied = [p.name for p in repo.mq.applied]
@@ -221,7 +277,10 @@ def prompt(ui, repo, fs='', **opts):
                 if post_unapplied_filter:
                     patches[n] = patches[n] + post_unapplied_filter_arg
 
-        return _with_groups(g, sep.join(patches)) if patches else ''
+        if patches:
+            return _with_groups(g, sep.join(patches))
+        else:
+            return ''
 
     def _queue(m):
         g = m.groups()
@@ -239,7 +298,10 @@ def prompt(ui, repo, fs='', **opts):
         elif out.startswith('patches-'):
             out = out[8:]
 
-        return _with_groups(g, out) if out else ''
+        if out:
+            return _with_groups(g, out)
+        else:
+            return ''
 
     def _remote(kind):
         def _r(m):
@@ -252,20 +314,30 @@ def prompt(ui, repo, fs='', **opts):
 
             cache_exists = path.isfile(cache)
 
-            cache_time = (datetime.fromtimestamp(os.stat(cache).st_mtime)
-                          if cache_exists else None)
+            if cache_exists:
+                cache_time = (datetime.fromtimestamp(os.stat(cache).st_mtime))
+            else:
+                cache_time = None
+
             if not cache_exists or cache_time < datetime.now() - CACHE_TIMEOUT:
                 if not cache_exists:
                     open(cache, 'w').close()
                 subprocess.Popen(['hg', 'prompt', '--cache-%s' % kind])
 
             if cache_exists:
-                with open(cache) as c:
+                c = open(cache)
+                if c:
                     count = len(c.readlines())
                     if g[1]:
-                        return _with_groups(g, str(count)) if count else ''
+                        if count:
+                            return _with_groups(g, str(count))
+                        else:
+                            return ''
                     else:
-                        return _with_groups(g, '') if count else ''
+                        if count:
+                            return _with_groups(g, '')
+                        else:
+                            return ''
             else:
                 return ''
         return _r
@@ -274,14 +346,29 @@ def prompt(ui, repo, fs='', **opts):
         g = m.groups()
 
         parents = repo[None].parents()
-        parent = 0 if '|merge' not in g else 1
-        parent = parent if len(parents) > parent else None
+        if '|merge' not in g:
+            parent = 0
+        else:
+            parent = 1
+        if len(parents) > parent:
+            parent = parent
+        else:
+            parent = None
 
-        rev = parents[parent].rev() if parent is not None else -1
-        return _with_groups(g, str(rev)) if rev >= 0 else ''
+        if parent is not None:
+            rev = parents[parent].rev() 
+        else:
+            rev = -1
+        if rev >= 0:
+            return _with_groups(g, str(rev))
+        else:
+            return ''
 
     def _root(m):
-        return _with_groups(m.groups(), repo.root) if repo.root else ''
+        if repo.root:
+            return _with_groups(m.groups(), repo.root)
+        else:
+            return ''
 
     def _status(m):
         g = m.groups()
@@ -292,40 +379,74 @@ def prompt(ui, repo, fs='', **opts):
 
         flag = ''
         if '|modified' not in g and '|unknown' not in g:
-            flag = '!' if modified else '?' if unknown else ''
+            if modified:
+                flag = '!'
+            else:
+                if unknown:
+                    flag = '?'
+                else:
+                    flag = ''
         else:
             if '|modified' in g:
-                flag += '!' if modified else ''
+                if modified:
+                    flag += '!' 
+                else:
+                    flag += '' 
             if '|unknown' in g:
-                flag += '?' if unknown else ''
+                if unknown:
+                    flag += '?'
+                else:
+                    flag += ''
 
-        return _with_groups(g, flag) if flag else ''
+        if flag:
+            return _with_groups(g, flag) 
+        else:
+            return ''
 
     def _tags(m):
         g = m.groups()
 
-        sep = g[1][1:] if g[1] else ' '
+        if g[1]:
+            sep = g[1][1:]
+        else:
+            sep = ' '
         tags = repo[None].tags()
 
-        return _with_groups(g, sep.join(tags)) if tags else ''
+        if tags:
+            return _with_groups(g, sep.join(tags))
+        else:
+            return ''
 
     def _task(m):
         try:
             task = extensions.find('tasks').current(repo)
-            return _with_groups(m.groups(), task) if task else ''
+            if task:
+                return _with_groups(m.groups(), task)
+            else:
+                return ''
         except KeyError:
             return ''
 
     def _tip(m):
         g = m.groups()
 
-        format = short if '|short' in g else hex
+        format = short 
+        if '|short' in g:
+            format = short
+        else:
+            format = hex
 
         tip = repo[len(repo) - 1]
         rev = tip.rev()
-        tip = format(tip.node()) if '|node' in g else tip.rev()
+        if '|node' in g:
+            tip = format(tip.node()) 
+        else:
+            tip = tip.rev()
 
-        return _with_groups(g, str(tip)) if rev >= 0 else ''
+        if rev >= 0:
+            return _with_groups(g, str(tip))
+        else:
+            return ''
 
     def _update(m):
         if not repo.branchtags():
@@ -334,8 +455,10 @@ def prompt(ui, repo, fs='', **opts):
 
         current_rev = repo[None].parents()[0]
         to = repo[repo.branchtags()[current_rev.branch()]]
-        return _with_groups(m.groups(), '^') if current_rev != to else ''
-
+        if current_rev != to:
+            return _with_groups(m.groups(), '^')
+        else:
+            return ''
 
     if opts.get("angle_brackets"):
         tag_start = r'\<([^><]*?\<)?'
