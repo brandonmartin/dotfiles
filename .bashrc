@@ -12,6 +12,7 @@ if [ $? -eq 0 ]; then
   if [[ $- == *i* ]]; then
     if ! echo ${BASH_EXECUTION_STRING} | grep -E '^scp.*|^rsync.*|^git.*' >> /dev/null; then
       # switch to zsh
+      export LANG=en_US.UTF-8
       exec ${ZSH_EXECUTABLE} -i
     fi
   fi
