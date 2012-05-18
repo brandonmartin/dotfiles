@@ -1,3 +1,22 @@
 [user]
 	name = Brandon Martin
-	email = b@heyomayeah.com
+  email = b@heyomayeah.com
+[color]
+  ui = auto
+[color "branch"]
+  current = cyan bold
+  local = green bold
+  remote = magenta bold
+[color "diff"]
+  meta = yellow bold
+  frag = cyan bold
+  old = red bold
+  new = green bold
+  whitespace = white bold reverse
+[color "status"]
+  added = green bold
+  changed = magenta bold
+  untracked = cyan bold
+[core]
+  whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
