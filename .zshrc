@@ -43,4 +43,11 @@ if [ -d "/opt/python2.7/bin" ]; then
   export PATH="/opt/python2.7/bin:${PATH}"
 fi
 
+# NetBSD
+if [ $(uname -s) = "NetBSD" ]; then
+  if [ -x "/usr/pkg/gnu/bin/ls" ]; then
+    alias ls="/usr/pkg/gnu/bin/ls --color=always"
+  fi
+fi
+
 umask 022
