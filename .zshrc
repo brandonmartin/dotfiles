@@ -2,7 +2,7 @@
 export ZSH=$HOME/.oh-my-zsh
 
 if [ -z ${DISPLAY} ]; then
-  ZSH_THEME="imajes"
+  ZSH_THEME="gentoo"
 else
   ZSH_THEME="brandoma"
 fi 
@@ -24,14 +24,23 @@ COMPLETION_WAITING_DOTS="false"
 
 plugins=(git vi-mode django pip)
 
+source /etc/profile
+export LANG=en_US.UTF-8
+
 source $ZSH/oh-my-zsh.sh
 
 bindkey -M viins '^r' history-incremental-search-backward
 bindkey -M vicmd '^r' history-incremental-search-backward
 
-export LANG=en_US.UTF-8
 
-source /etc/profile
+## default to the end of line on up arrow
+autoload -U history-search-end
+
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+
+bindkey "\e[A" history-beginning-search-backward-end
+bindkey "\e[B" history-beginning-search-forward-end
 
 # Prefer VIM if installed
 if [ -x $(which vim) ]; then
