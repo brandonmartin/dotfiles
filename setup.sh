@@ -3,7 +3,7 @@
 
 BASE="GIT/dotfiles"
 LINKS=".bashrc .conkyrc .gitconfig .hgrc .oh-my-zsh"
-LINKS="${LINKS} spectrwm.conf .scrotwm.conf .vim .vimrc .xinitrc"
+LINKS="${LINKS} .spectrwm.conf .scrotwm.conf .vim .vimrc .xinitrc"
 LINKS="${LINKS} .Xresources .zshrc"
 
 if [ -z "${HOME}" ]; then
