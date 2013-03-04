@@ -32,8 +32,7 @@ source $ZSH/oh-my-zsh.sh
 bindkey -M viins '^r' history-incremental-search-backward
 bindkey -M vicmd '^r' history-incremental-search-backward
 
-
-## default to the end of line on up arrow
+# default to the end of line on up arrow
 autoload -U history-search-end
 
 zle -N history-beginning-search-backward-end history-search-end
@@ -57,6 +56,11 @@ if [ $(uname -s) = "NetBSD" ]; then
   if [ -x "/usr/pkg/gnu/bin/ls" ]; then
     alias ls="/usr/pkg/gnu/bin/ls --color=always"
   fi
+fi
+
+# HOME/bin
+if [ -n "${HOME}" ]; then
+  export PATH="${HOME}/bin:${PATH}"
 fi
 
 umask 022

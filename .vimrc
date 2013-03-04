@@ -165,3 +165,7 @@ let g:syntastic_auto_loc_list=1
 " Stuff for VimClojure
 let g:vimclojure#HighlightBuiltins = 1
 let g:vimclojure#ParenRainbow = 1
+
+" disable pyflakes
+let g:did_pyflakes_plugin = 1
+

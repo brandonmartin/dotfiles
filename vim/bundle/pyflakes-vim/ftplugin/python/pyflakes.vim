@@ -11,7 +11,6 @@
 " Maintainer: Kevin Watters <kevin.watters@gmail.com>
 " Version: 0.1
 
-let b:did_pyflakes_plugin = 1
 if exists("b:did_pyflakes_plugin")
     finish " only load once
 else
