@@ -33,3 +33,6 @@ xterm*jumpScroll:true
 xterm*multiScroll:true
 xterm*toolBar:false
 
+# virtualbox
+xterm*selectToClipboard:true
+
